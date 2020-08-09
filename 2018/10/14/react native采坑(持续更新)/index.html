@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2"/>
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0"/>
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '9RQY3CC5KU',
+      apiKey: 'dd51b14f02d2eb01b654e5b8d79688b8',
+      indexName: 'My Blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="环境搭建时报某某文件找不到解决：尝试升级你的 cli 12npm install -g react-native-git-upgradereact-native-git-upgrade VSCode报错 ‘type aliases’ can only be used in a .ts file.ts(8008)解决：打开 VSCode 扩展，输入 @buildin 筛选选择 TypeScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="React Native采坑(持续更新)">
+<meta property="og:url" content="http://yoursite.com/2018/10/14/react native采坑(持续更新)/index.html">
+<meta property="og:site_name" content="火箭快餐的博客">
+<meta property="og:description" content="环境搭建时报某某文件找不到解决：尝试升级你的 cli 12npm install -g react-native-git-upgradereact-native-git-upgrade VSCode报错 ‘type aliases’ can only be used in a .ts file.ts(8008)解决：打开 VSCode 扩展，输入 @buildin 筛选选择 TypeScript">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-03-30T03:41:04.806Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="React Native采坑(持续更新)">
+<meta name="twitter:description" content="环境搭建时报某某文件找不到解决：尝试升级你的 cli 12npm install -g react-native-git-upgradereact-native-git-upgrade VSCode报错 ‘type aliases’ can only be used in a .ts file.ts(8008)解决：打开 VSCode 扩展，输入 @buildin 筛选选择 TypeScript">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2018/10/14/react native采坑(持续更新)/"/>
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>React Native采坑(持续更新) | 火箭快餐的博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">火箭快餐的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br/>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br/>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/14/react native采坑(持续更新)/"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="火箭快餐"/>
+      <meta itemprop="description" content=""/>
+      <meta itemprop="image" content="/uploads/avatar2.png"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="火箭快餐的博客"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">React Native采坑(持续更新)
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2018-10-14 00:00:00" itemprop="dateCreated datePublished" datetime="2018-10-14T00:00:00+08:00">2018-10-14</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-03-30 11:41:04" itemprop="dateModified" datetime="2019-03-30T11:41:04+08:00">2019-03-30</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/React-Native/" itemprop="url" rel="index"><span itemprop="name">React Native</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="环境搭建时报某某文件找不到"><a href="#环境搭建时报某某文件找不到" class="headerlink" title="环境搭建时报某某文件找不到"></a>环境搭建时报某某文件找不到</h4><p>解决：尝试升级你的 cli</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install -g react-native-git-upgrade</span><br><span class="line">react-native-git-upgrade</span><br></pre></td></tr></table></figure>
+<h4 id="VSCode报错-‘type-aliases’-can-only-be-used-in-a-ts-file-ts-8008"><a href="#VSCode报错-‘type-aliases’-can-only-be-used-in-a-ts-file-ts-8008" class="headerlink" title="VSCode报错 ‘type aliases’ can only be used in a .ts file.ts(8008)"></a>VSCode报错 ‘type aliases’ can only be used in a .ts file.ts(8008)</h4><p>解决：打开 VSCode 扩展，输入 <code>@buildin</code> 筛选选择 TypeScript and JavaScript Language Features 这款插件 disable 掉即可。</p>
+<h4 id="某些原生库如果没有链接进来，会报-undefined-is-not-an-object-evaluating-‘xxx’-错误"><a href="#某些原生库如果没有链接进来，会报-undefined-is-not-an-object-evaluating-‘xxx’-错误" class="headerlink" title="某些原生库如果没有链接进来，会报 undefined is not an object(evaluating ‘xxx’) 错误"></a>某些原生库如果没有链接进来，会报 <strong>undefined is not an object(evaluating ‘xxx’)</strong> 错误</h4><p>解决：<code>react-native link xxx</code> 或<a href="https://reactnative.cn/docs/linking-libraries-ios/" target="_blank" rel="noopener">手动链接</a>进来 </p>
+<a id="more"></a>
+<h4 id="main-jsbundle-丢失"><a href="#main-jsbundle-丢失" class="headerlink" title="main.jsbundle 丢失"></a>main.jsbundle 丢失</h4><p>解决：删掉之前绑定，跑一下 <code>react-native bundle --entry-file index.js --platform ios --dev false --bundle-output ios/main.jsbundle --assets-dest ios</code> 重新生成，需要留意 AppDelegate.m 中的相关设置</p>
+<h4 id="‘config-h’-file-not-found"><a href="#‘config-h’-file-not-found" class="headerlink" title="‘config.h’ file not found"></a>‘config.h’ file not found</h4><p>解决：<a href="https://blog.csdn.net/qq_28978893/article/details/78720488" target="_blank" rel="noopener">React Native 日常报错 ‘config.h’ file not found</a></p>
+<h4 id="error-Build-input-file-cannot-be-found-libfishhook-a"><a href="#error-Build-input-file-cannot-be-found-libfishhook-a" class="headerlink" title="error: Build input file cannot be found: libfishhook.a"></a>error: Build input file cannot be found: libfishhook.a</h4><p>解决：<a href="https://blog.csdn.net/levine_hhb/article/details/82819629" target="_blank" rel="noopener">问题-react-native无法运行</a></p>
+<h4 id="远程调试出现无限循环的”callbacks-poll”，这个问题是有realm框架发出的"><a href="#远程调试出现无限循环的”callbacks-poll”，这个问题是有realm框架发出的" class="headerlink" title="远程调试出现无限循环的”callbacks_poll”，这个问题是有realm框架发出的"></a>远程调试出现无限循环的”callbacks_poll”，这个问题是有realm框架发出的</h4><p>解决：<a href="https://github.com/realm/realm-js/issues/1538#issuecomment-350346598" target="_blank" rel="noopener">Infinite loop of “callbacks_poll” </a>，完整路径：node_modules/realm/lib/browser/rpc.js</p>
+<h4 id="‘xxx-is-not-a-function’"><a href="#‘xxx-is-not-a-function’" class="headerlink" title="‘xxx is not a function’"></a>‘xxx is not a function’</h4><p>解决：可能是this没有绑定该方法</p>
+<h4 id="JavaScript浮点数计算出现精度丢失"><a href="#JavaScript浮点数计算出现精度丢失" class="headerlink" title="JavaScript浮点数计算出现精度丢失"></a>JavaScript浮点数计算出现精度丢失</h4><p>解决：可以使用mathjs库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">importmathfrom&apos;mathjs&apos;;</span><br><span class="line"></span><br><span class="line">math.add(math.bignumber(10.1), math.bignumber(0.2)).toString();</span><br></pre></td></tr></table></figure>
+<h4 id="react-native如何全局导入模块，类似iOS的pch文件中import"><a href="#react-native如何全局导入模块，类似iOS的pch文件中import" class="headerlink" title="react native如何全局导入模块，类似iOS的pch文件中import"></a>react native如何全局导入模块，类似iOS的pch文件中import</h4><p>解决：react native中有个全局对象模块<code>global</code>（其实是Node.js的），为global添加属性就能全局使用，使用的时候不需要global前缀。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 自定义的js文件，最后只需要在项目启动时引入这个文件就行</span><br><span class="line"></span><br><span class="line">importmathfrom&apos;mathjs&apos;;</span><br><span class="line"></span><br><span class="line">global.math=math;</span><br></pre></td></tr></table></figure>
+<h4 id="打包时出现-node-modules-react-native-root-siblings-index-js-node-modules-react-native-root-siblings-index-js-Exporting-local-“-default”-which-is-not-declared-This-is-an-error-on-an-internal-node-Probably-an-internal-error-的问题。"><a href="#打包时出现-node-modules-react-native-root-siblings-index-js-node-modules-react-native-root-siblings-index-js-Exporting-local-“-default”-which-is-not-declared-This-is-an-error-on-an-internal-node-Probably-an-internal-error-的问题。" class="headerlink" title="打包时出现/node_modules/react-native-root-siblings/index.js: /node_modules/react-native-root-siblings/index.js: Exporting local “_default”, which is not declared. (This is an error on an internal node. Probably an internal error.)的问题。"></a>打包时出现/node_modules/react-native-root-siblings/index.js: /node_modules/react-native-root-siblings/index.js: Exporting local “_default”, which is not declared. (This is an error on an internal node. Probably an internal error.)的问题。</h4><p>解决：进入到<code>node_modules/react-native-root-siblings/index.js</code>中，修改<code>export default class { … }</code>为<code>export default class ClassName { .. }</code>，<code>ClassName</code>随便命个名。<a href="https://github.com/magicismight/react-native-root-toast/issues/79" target="_blank" rel="noopener">详见</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/14/iOS开发小贴士(持续更新)/" rel="next" title="iOS开发小贴士(持续更新)">
+                <i class="fa fa-chevron-left"></i> iOS开发小贴士(持续更新)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/11/10/UITableView渲染多种样式Cell的方案/" rel="prev" title="UITableView渲染多种样式Cell的方案">
+                UITableView渲染多种样式Cell的方案 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/avatar2.png"
+                alt="火箭快餐"/>
+            
+              <p class="site-author-name" itemprop="name">火箭快餐</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#环境搭建时报某某文件找不到"><span class="nav-number">1.</span> <span class="nav-text">环境搭建时报某某文件找不到</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#VSCode报错-‘type-aliases’-can-only-be-used-in-a-ts-file-ts-8008"><span class="nav-number">2.</span> <span class="nav-text">VSCode报错 ‘type aliases’ can only be used in a .ts file.ts(8008)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#某些原生库如果没有链接进来，会报-undefined-is-not-an-object-evaluating-‘xxx’-错误"><span class="nav-number">3.</span> <span class="nav-text">某些原生库如果没有链接进来，会报 undefined is not an object(evaluating ‘xxx’) 错误</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#main-jsbundle-丢失"><span class="nav-number">4.</span> <span class="nav-text">main.jsbundle 丢失</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#‘config-h’-file-not-found"><span class="nav-number">5.</span> <span class="nav-text">‘config.h’ file not found</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#error-Build-input-file-cannot-be-found-libfishhook-a"><span class="nav-number">6.</span> <span class="nav-text">error: Build input file cannot be found: libfishhook.a</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#远程调试出现无限循环的”callbacks-poll”，这个问题是有realm框架发出的"><span class="nav-number">7.</span> <span class="nav-text">远程调试出现无限循环的”callbacks_poll”，这个问题是有realm框架发出的</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#‘xxx-is-not-a-function’"><span class="nav-number">8.</span> <span class="nav-text">‘xxx is not a function’</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JavaScript浮点数计算出现精度丢失"><span class="nav-number">9.</span> <span class="nav-text">JavaScript浮点数计算出现精度丢失</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#react-native如何全局导入模块，类似iOS的pch文件中import"><span class="nav-number">10.</span> <span class="nav-text">react native如何全局导入模块，类似iOS的pch文件中import</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#打包时出现-node-modules-react-native-root-siblings-index-js-node-modules-react-native-root-siblings-index-js-Exporting-local-“-default”-which-is-not-declared-This-is-an-error-on-an-internal-node-Probably-an-internal-error-的问题。"><span class="nav-number">11.</span> <span class="nav-text">打包时出现/node_modules/react-native-root-siblings/index.js: /node_modules/react-native-root-siblings/index.js: Exporting local “_default”, which is not declared. (This is an error on an internal node. Probably an internal error.)的问题。</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">火箭快餐</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.6.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

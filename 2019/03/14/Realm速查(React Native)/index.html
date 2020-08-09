@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222"/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2"/>
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0"/>
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '9RQY3CC5KU',
+      apiKey: 'dd51b14f02d2eb01b654e5b8d79688b8',
+      indexName: 'My Blog',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="表(数据模型)12345678910111213141516171819202122232425262728293031323334353637383940// 支持的数据类型:bool、int、float、double、string、data 和 date。const person = &amp;#123;    name:&apos;Person&apos;,              // 表名    primaryK">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Realm速查(React Native)">
+<meta property="og:url" content="http://yoursite.com/2019/03/14/Realm速查(React Native)/index.html">
+<meta property="og:site_name" content="火箭快餐的博客">
+<meta property="og:description" content="表(数据模型)12345678910111213141516171819202122232425262728293031323334353637383940// 支持的数据类型:bool、int、float、double、string、data 和 date。const person = &amp;#123;    name:&apos;Person&apos;,              // 表名    primaryK">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-03-30T03:56:03.676Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Realm速查(React Native)">
+<meta name="twitter:description" content="表(数据模型)12345678910111213141516171819202122232425262728293031323334353637383940// 支持的数据类型:bool、int、float、double、string、data 和 date。const person = &amp;#123;    name:&apos;Person&apos;,              // 表名    primaryK">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2019/03/14/Realm速查(React Native)/"/>
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Realm速查(React Native) | 火箭快餐的博客</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">火箭快餐的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br/>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br/>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/14/Realm速查(React Native)/"/>
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="火箭快餐"/>
+      <meta itemprop="description" content=""/>
+      <meta itemprop="image" content="/uploads/avatar2.png"/>
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="火箭快餐的博客"/>
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Realm速查(React Native)
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-03-14 00:00:00" itemprop="dateCreated datePublished" datetime="2019-03-14T00:00:00+08:00">2019-03-14</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-03-30 11:56:03" itemprop="dateModified" datetime="2019-03-30T11:56:03+08:00">2019-03-30</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/React-Native/" itemprop="url" rel="index"><span itemprop="name">React Native</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="表-数据模型"><a href="#表-数据模型" class="headerlink" title="表(数据模型)"></a>表(数据模型)</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 支持的数据类型:bool、int、float、double、string、data 和 date。</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> person = &#123;</span><br><span class="line">    name:<span class="string">'Person'</span>,              <span class="comment">// 表名</span></span><br><span class="line">    primaryKey:<span class="string">'id'</span>,            <span class="comment">// 主键属性名，realm主键不会自增，需要开发者维护</span></span><br><span class="line">    properties:&#123;</span><br><span class="line">      id:<span class="string">'string'</span>,</span><br><span class="line">      depth:<span class="string">'double'</span>,</span><br><span class="line">      sampleBarcode:<span class="string">'string?'</span>,  <span class="comment">// 可选</span></span><br><span class="line">      sampleCode:&#123;</span><br><span class="line">        type: <span class="string">'int'</span>, </span><br><span class="line">        <span class="keyword">default</span>: <span class="number">0</span>,             <span class="comment">// 默认值</span></span><br><span class="line">        optional: <span class="literal">true</span>,         <span class="comment">// 可选</span></span><br><span class="line">      &#125;,		</span><br><span class="line">      name:&#123;</span><br><span class="line">        type: <span class="string">'string'</span>, </span><br><span class="line">        indexed: <span class="literal">true</span>,          <span class="comment">// 索引属性，支持int、string 和 bool</span></span><br><span class="line">      &#125;,						</span><br><span class="line">      frame:&#123;</span><br><span class="line">        type: <span class="string">'list'</span>,           <span class="comment">// 列表数据</span></span><br><span class="line">       	objectType: <span class="string">'Car'</span>,      <span class="comment">// 对象为Car(另一个表名)</span></span><br><span class="line">      &#125;,</span><br><span class="line">      cars:<span class="string">'Car[]'</span>,             <span class="comment">// 列表数据另一种写法，列表不能为可选，一对多关系</span></span><br><span class="line">      car:<span class="string">'Car'</span>,                <span class="comment">// 对象属性永远是可选的，一对一关系</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> car = &#123;</span><br><span class="line">  	name:<span class="string">'Car'</span>,			</span><br><span class="line">    primaryKey:<span class="string">'carId'</span>,		</span><br><span class="line">    properties:&#123;</span><br><span class="line">      carId:<span class="string">'string'</span>,</span><br><span class="line">      owners: &#123;</span><br><span class="line">        type: <span class="string">'linkingObjects'</span>,   <span class="comment">// 反向关联，linkingObjects固定，且owners不能为空</span></span><br><span class="line">        objectType: <span class="string">'Person'</span>,     <span class="comment">// 关联的表</span></span><br><span class="line">        roperty: <span class="string">'cars'</span>,          <span class="comment">// 要关联的属性</span></span><br><span class="line">      &#125;,				</span><br><span class="line">      make: <span class="string">'string'</span>,</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h1 id="打开关闭数据库"><a href="#打开关闭数据库" class="headerlink" title="打开关闭数据库"></a>打开关闭数据库</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 打开数据库，异步，promise形式</span></span><br><span class="line">Realm.open(config: Realm.Configuration)		</span><br><span class="line">  .then(<span class="function"><span class="params">realm</span> =&gt;</span> &#123;</span><br><span class="line">      <span class="comment">// 在这里进行数据库操作</span></span><br><span class="line">  		...</span><br><span class="line">    	realm.close();		<span class="comment">// 关闭数据库(不用的时候再关)</span></span><br><span class="line">  &#125;)</span><br><span class="line">  .catch(<span class="function"><span class="params">error</span> =&gt;</span> &#123;</span><br><span class="line">    	</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">Realm.Configuration &#123;</span><br><span class="line">    <span class="comment">// 512位（64字节）加密密钥，用于加密和解密Realm中的所有数据。</span></span><br><span class="line">    encryptionKey?: <span class="built_in">ArrayBuffer</span> | ArrayBufferView | <span class="built_in">Int8Array</span>;</span><br><span class="line">    <span class="comment">// 需要迁移时要运行的函数。</span></span><br><span class="line">    migration?: <span class="function">(<span class="params">oldRealm: Realm, newRealm: Realm</span>) =&gt;</span> <span class="keyword">void</span>;</span><br><span class="line">    <span class="comment">// 数据库的文件的路径。</span></span><br><span class="line">    path?: string;</span><br><span class="line">    <span class="comment">// 指定是否应以只读方式打开此Realm。</span></span><br><span class="line">    readOnly?: boolean;</span><br><span class="line">    <span class="comment">// 指定是否应在内存中打开此Realm，不存储到硬盘</span></span><br><span class="line">    inMemory?: boolean;</span><br><span class="line">    <span class="comment">// 要打开的model表</span></span><br><span class="line">    schema?: (ObjectClass | ObjectSchema)[];</span><br><span class="line">    <span class="comment">// 版本号，迁移的时候需要变更</span></span><br><span class="line">    schemaVersion?: number;</span><br><span class="line">    <span class="comment">// 同步配置参数。</span></span><br><span class="line">    sync?: Partial&lt;Realm.Sync.SyncConfiguration&gt;;</span><br><span class="line">    <span class="comment">// 指定在需要迁移时是否应删除此Realm。处于开发模式，可以使用这项功能来自动删除数据。</span></span><br><span class="line">    deleteRealmIfMigrationNeeded?: boolean;</span><br><span class="line">    <span class="comment">// 指定如果使用较旧版本的Realm库创建此Realm的文件格式是否应自动升级。如果设置为true(禁用)并且需要升级文件格式，则会引发错误。</span></span><br><span class="line">    disableFormatUpgrade?: boolean;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="增"><a href="#增" class="headerlink" title="增"></a>增</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">realm.write(<span class="function"><span class="params">()</span> =&gt;</span> &#123;		<span class="comment">// 这个括号是一个事务，增删改都需要在事务中操作</span></span><br><span class="line">  realm.create(<span class="string">'Person'</span>, &#123;</span><br><span class="line">    name: <span class="string">'Joe'</span>,</span><br><span class="line">    id: <span class="string">'1'</span>,</span><br><span class="line">    <span class="comment">// 嵌套对象将依次创建</span></span><br><span class="line">    car: &#123;<span class="attr">make</span>: <span class="string">'Honda'</span>, <span class="attr">carId</span>:<span class="string">'123'</span>&#125;,</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h1 id="删"><a href="#删" class="headerlink" title="删"></a>删</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">realm.write(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> person = realm.objectForPrimaryKey(<span class="string">'Person'</span>, <span class="number">1</span>);	</span><br><span class="line">  <span class="comment">// 参数为删除的对象，可以是单个也可以是数组</span></span><br><span class="line">  realm.delete(person); </span><br><span class="line">  </span><br><span class="line">  <span class="keyword">let</span> allPersons = realm.objects(<span class="string">'Person'</span>);</span><br><span class="line">  realm.delete(allPersons); </span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h1 id="改"><a href="#改" class="headerlink" title="改"></a>改</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">realm.write(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 根据主键更新对象，API与创建对象相同，只是后面有true，代表更新对象，这里只更新depth，其他属性不变</span></span><br><span class="line">  realm.create(<span class="string">'Person'</span>, &#123;<span class="attr">id</span>: <span class="number">1</span>, <span class="attr">depth</span>: <span class="number">55</span>&#125;, <span class="literal">true</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<h1 id="查"><a href="#查" class="headerlink" title="查"></a>查</h1><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 当执行查询操作后，会返回一个 Results 对象。Results 只是数据的投影，不能够被修改。</span></span><br><span class="line"><span class="comment">// 当通过事务更新数据库数据时，已取出的 Results 也会实时更新</span></span><br><span class="line"><span class="comment">// Realm 中的检索是惰性的，只会在检索到的结果被明确访问时，才会从其中加载对象。</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 取出所有Person对象，返回 Results</span></span><br><span class="line"><span class="keyword">let</span> persons = realm.objects(<span class="string">'Person'</span>);		</span><br><span class="line"><span class="comment">// 根据主键查询</span></span><br><span class="line"><span class="keyword">let</span> person = realm.objectForPrimaryKey(<span class="string">'Person'</span>, <span class="number">1</span>);	</span><br><span class="line"><span class="comment">// 过滤，返回 Results</span></span><br><span class="line"><span class="keyword">let</span> tanPersons = dogs.filtered(<span class="string">'color = "tan" AND name BEGINSWITH "B"'</span>);	</span><br><span class="line"><span class="comment">// 排序，返回 Results</span></span><br><span class="line"><span class="keyword">let</span> sortPersons = dogs.sorted(<span class="string">'miles'</span>);	</span><br><span class="line"><span class="comment">// 降序排序，返回 Results</span></span><br><span class="line"><span class="keyword">let</span> descendingPersons = dogs.sorted(<span class="string">'miles'</span>, <span class="literal">true</span>);	</span><br><span class="line"><span class="comment">// 多条件排序，price 降序，miles 升序</span></span><br><span class="line"><span class="keyword">let</span> mutablePersons = dogs.sorted([[<span class="string">'price'</span>, <span class="literal">true</span>], [<span class="string">'miles'</span>, <span class="literal">false</span>]]);</span><br><span class="line"><span class="comment">// 限制获取数量</span></span><br><span class="line"><span class="keyword">let</span> firstDogs = dogs.slice(<span class="number">0</span>, <span class="number">5</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="条件查询"><a href="#条件查询" class="headerlink" title="条件查询"></a>条件查询</h2><ul>
+<li>时间筛选：<code>YYYY-MM-DD@HH:MM:SS:NANOSECONDS</code>和<code>YYYY-MM-DDTHH:MM:SS:NANOSECONDS</code>，<code>NANOSECONDS</code>可省略</li>
+<li>比较运算符：<code>=</code>/ <code>==</code>，<code>&lt;=</code>，<code>&lt;</code>，<code>&gt;=</code>，<code>&gt;</code>，和<code>!=</code>/ <code>&lt;&gt;(不知道这是什么符号)</code>，支持<code>int</code>，<code>float</code>，<code>double</code>，和<code>Date</code>，但<code>bool</code>只支持一部分运算符</li>
+<li><code>string</code>，<code>data(ArrayBuffer)</code>支持<code>=</code>（和<code>==</code>）， <code>!=</code>（和<code>&lt;&gt;</code>），<code>BEGINSWITH</code>，<code>CONTAINS</code>和<code>ENDSWITH</code>，例如<code>name CONTAINS &#39;Ja&#39;</code>；<code>string</code>还支持<code>LIKE</code>，模糊匹配。</li>
+<li><code>[c]</code>不区分大小写，需要用在<code>CONTAINS</code>，例：<code>CONTAINS[c] &#39;Ja&#39;</code>。</li>
+<li>连接运算符：<code>AND</code>/ <code>&amp;&amp;</code>，<code>OR</code>/ <code>||</code>和<code>NOT</code>/ <code>!</code>。</li>
+<li>列表属性运算符：<code>@count</code>，<code>@size</code>，<code>@min</code>，<code>@max</code>，<code>@sum</code>，<code>@avg(平均值)</code>，例：<code>company.employees.@count &gt; 5</code>，检索出员工数量多于5个的公司。</li>
+<li><code>$0</code>，<code>$1</code>…用于表示变量，类似 C 语言的<code>%f</code>，例：<code>&quot;cars.@sum.miles &gt; $0&quot;, average</code>，<code>$0</code>代表<code>average</code></li>
+</ul>
+<h1 id="数据迁移"><a href="#数据迁移" class="headerlink" title="数据迁移"></a>数据迁移</h1><p>表结构发生变化就需要迁移，如果只是新增字段或将字段设置为可选，可以直接将<code>schemaVersion</code>加一，不需要其他操作。</p>
+<h2 id="单次版本迁移"><a href="#单次版本迁移" class="headerlink" title="单次版本迁移"></a>单次版本迁移</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Realm.open(&#123;</span><br><span class="line">  schema: [PersonSchema],</span><br><span class="line">  schemaVersion: version,</span><br><span class="line">  migration: <span class="function">(<span class="params">oldRealm, newRealm</span>) =&gt;</span> &#123;	<span class="comment">// 迁移函数</span></span><br><span class="line">    <span class="comment">// 判断oldRealm版本号是不是低于当前版本号，是就迁移</span></span><br><span class="line">    <span class="keyword">if</span> (oldRealm.schemaVersion &lt; version) &#123;</span><br><span class="line">      <span class="keyword">const</span> oldObjects = oldRealm.objects(<span class="string">'Person'</span>);</span><br><span class="line">      <span class="keyword">const</span> newObjects = newRealm.objects(<span class="string">'Person'</span>);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; oldObjects.length; i++) &#123;</span><br><span class="line">        newObjects[i].name = oldObjects[i].firstName + <span class="string">' '</span> + oldObjects[i].lastName;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<h2 id="线性迁移"><a href="#线性迁移" class="headerlink" title="线性迁移"></a>线性迁移</h2><p>当多次迭代后数据库发生了多次变化，需要逐次迁移以保证数据的正确性。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> schemas = [   <span class="comment">// 历代所有修改过的表，版本号和迁移函数</span></span><br><span class="line">  &#123; <span class="attr">schema</span>: schema1, <span class="attr">schemaVersion</span>: <span class="number">1</span>, <span class="attr">migration</span>: migrationFunction1 &#125;,</span><br><span class="line">  &#123; <span class="attr">schema</span>: schema2, <span class="attr">schemaVersion</span>: <span class="number">2</span>, <span class="attr">migration</span>: migrationFunction2 &#125;,</span><br><span class="line">  ...</span><br><span class="line">]</span><br><span class="line">  </span><br><span class="line"><span class="comment">// 获取当前数据库的版本号，Realm.defaultPath为数据库默认路径</span></span><br><span class="line"><span class="keyword">let</span> currentSchemaIndex = Realm.schemaVersion(Realm.defaultPath);</span><br><span class="line"><span class="keyword">let</span> loopIndex = schemas.length;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 查找当前版本号在版本号列表中的位置</span></span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">let</span> i=<span class="number">0</span>; i&lt;schemas.length; i++) &#123;</span><br><span class="line">  <span class="keyword">if</span> (currentSchemaIndex &lt; schemas[i][schemaVersion]) &#123;</span><br><span class="line">    loopIndex = i;</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 进行迁移</span></span><br><span class="line"><span class="keyword">while</span> (loopIndex &lt; schemas.length) &#123;</span><br><span class="line">  <span class="comment">// new Realm()会阻塞线程</span></span><br><span class="line">  <span class="keyword">const</span> migratedRealm = <span class="keyword">new</span> Realm(schemas[loopIndex++]);</span><br><span class="line">  migratedRealm.close();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 迁移完成</span></span><br><span class="line">Realm.open(schemas[schemas.length<span class="number">-1</span>]);</span><br></pre></td></tr></table></figure>
+<h1 id="监听"><a href="#监听" class="headerlink" title="监听"></a>监听</h1><p><code>Realm</code>，<code>Results</code>和<code>List</code>对象都支持<code>addListener</code>监听。下面是两种不同类型的通知</p>
+<ul>
+<li><strong>Realm Notifications</strong>：提交写入事务时通知的简单回调。</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 添加Realm Notification，updateUI是函数</span></span><br><span class="line">realm.addListener(<span class="string">'change'</span>, updateUI);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 移除Realm Notification</span></span><br><span class="line">realm.removeListener(<span class="string">'change'</span>, updateUI);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 移除所有通知</span></span><br><span class="line">realm.removeAllListeners();</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>Collection Notifications</strong>：在插入，删除和更新时接收更改元数据的回调。</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">collectionListenerRetainer = realm.objects(<span class="string">'Dog'</span>).filtered(<span class="string">'age &lt; 2'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 监听回调函数，第一个参数：更改的集合，第二个参数：事件对象</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">listener</span>(<span class="params">puppies, changes</span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 插入</span></span><br><span class="line">  changes.insertions.forEach(<span class="function">(<span class="params">index</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> insertedDog = puppies[index];</span><br><span class="line">    ...</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 修改</span></span><br><span class="line">  changes.modifications.forEach(<span class="function">(<span class="params">index</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> modifiedDog = puppies[index];</span><br><span class="line">    ...</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 删除</span></span><br><span class="line">  changes.deletions.forEach(<span class="function">(<span class="params">index</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// 不支持从puppies中取出被删除的数据</span></span><br><span class="line">    ...</span><br><span class="line">  &#125;);</span><br><span class="line"></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">collectionListenerRetainer.addListener(listener);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 移除所有监听</span></span><br><span class="line">realm.removeAllListeners();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 移除单个监听</span></span><br><span class="line">collectionListenerRetainer.removeListener(listener);</span><br></pre></td></tr></table></figure>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><blockquote>
+<p><a href="https://realm.io/cn/docs/javascript/latest/" target="_blank" rel="noopener">Realm中文文档(旧)</a></p>
+<p><a href="https://realm.io/docs/javascript/latest/" target="_blank" rel="noopener">Realm最新文档(无中文)</a></p>
+</blockquote>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/10/友盟Debug自检没有配置微信回调activity/" rel="next" title="友盟Debug自检没有配置微信回调activity">
+                <i class="fa fa-chevron-left"></i> 友盟Debug自检没有配置微信回调activity
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/uploads/avatar2.png"
+                alt="火箭快餐"/>
+            
+              <p class="site-author-name" itemprop="name">火箭快餐</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">6</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#表-数据模型"><span class="nav-number">1.</span> <span class="nav-text">表(数据模型)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#打开关闭数据库"><span class="nav-number">2.</span> <span class="nav-text">打开关闭数据库</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#增"><span class="nav-number">3.</span> <span class="nav-text">增</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#删"><span class="nav-number">4.</span> <span class="nav-text">删</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#改"><span class="nav-number">5.</span> <span class="nav-text">改</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#查"><span class="nav-number">6.</span> <span class="nav-text">查</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#条件查询"><span class="nav-number">6.1.</span> <span class="nav-text">条件查询</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据迁移"><span class="nav-number">7.</span> <span class="nav-text">数据迁移</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#单次版本迁移"><span class="nav-number">7.1.</span> <span class="nav-text">单次版本迁移</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线性迁移"><span class="nav-number">7.2.</span> <span class="nav-text">线性迁移</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#监听"><span class="nav-number">8.</span> <span class="nav-text">监听</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">9.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">火箭快餐</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.6.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> v7.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.0"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
