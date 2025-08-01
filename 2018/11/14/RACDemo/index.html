@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"9RQY3CC5KU","apiKey":"dd51b14f02d2eb01b654e5b8d79688b8","indexName":"My Blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="前言这是一篇单纯的使用ReactiveCocoa实现响应式开发的个人见解文章，使用的设计模式是传统的MVC，并非MVVM。 后面的内容会用到ReactiveCocoa，如果对ReactiveCocoa不了解的话可以先看下这两篇文章：  最快让你上手ReactiveCocoa之基础篇 最快让你上手ReactiveCocoa之进阶篇">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ReactiveCocoa的个人见解与使用">
+<meta property="og:url" content="http://yoursite.com/2018/11/14/RACDemo/index.html">
+<meta property="og:site_name" content="火箭快餐的博客">
+<meta property="og:description" content="前言这是一篇单纯的使用ReactiveCocoa实现响应式开发的个人见解文章，使用的设计模式是传统的MVC，并非MVVM。 后面的内容会用到ReactiveCocoa，如果对ReactiveCocoa不了解的话可以先看下这两篇文章：  最快让你上手ReactiveCocoa之基础篇 最快让你上手ReactiveCocoa之进阶篇">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://github.com/candlevista/resource/blob/master/RACDemo1.png?raw=true">
+<meta property="og:image" content="https://github.com/candlevista/resource/blob/master/RACDemo2.png?raw=true">
+<meta property="og:image" content="https://github.com/candlevista/resource/blob/master/RACDemo%E6%95%B0%E6%8D%AE%E6%B5%81%E5%8A%A8%E6%96%B9%E5%90%91.png?raw=true">
+<meta property="article:published_time" content="2018-11-13T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-01T14:42:51.718Z">
+<meta property="article:author" content="火箭快餐">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/candlevista/resource/blob/master/RACDemo1.png?raw=true">
+
+<link rel="canonical" href="http://yoursite.com/2018/11/14/RACDemo/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>ReactiveCocoa的个人见解与使用 | 火箭快餐的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">火箭快餐的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/11/14/RACDemo/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar2.png">
+      <meta itemprop="name" content="火箭快餐">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="火箭快餐的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ReactiveCocoa的个人见解与使用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-11-14 00:00:00" itemprop="dateCreated datePublished" datetime="2018-11-14T00:00:00+08:00">2018-11-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-08-01 22:42:51" itemprop="dateModified" datetime="2025-08-01T22:42:51+08:00">2025-08-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/iOS/" itemprop="url" rel="index"><span itemprop="name">iOS</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>这是一篇单纯的使用<code>ReactiveCocoa</code>实现响应式开发的个人见解文章，使用的设计模式是传统的MVC，并非MVVM。</p>
+<p>后面的内容会用到<code>ReactiveCocoa</code>，如果对<code>ReactiveCocoa</code>不了解的话可以先看下这两篇文章：</p>
+<ul>
+<li><a href="https://www.jianshu.com/p/87ef6720a096">最快让你上手ReactiveCocoa之基础篇</a></li>
+<li><a href="https://www.jianshu.com/p/e10e5ca413b7">最快让你上手ReactiveCocoa之进阶篇</a></li>
+</ul>
+<span id="more"></span>
+
+<h1 id="项目需求"><a href="#项目需求" class="headerlink" title="项目需求"></a>项目需求</h1><div align="center">
+    <img src="https://github.com/candlevista/resource/blob/master/RACDemo1.png?raw=true" alt="Sample"  width="50%" height="50%">
+    <p align="center">
+        <em>商品下单</em>
+    </p>
+</div>
+
+<p>简单说明一下：这是一个商品下单页，包含商品基本信息，选择时间，选择优惠券，购买数量调整，添加备注等一些操作。</p>
+<p><strong>需求：</strong></p>
+<ul>
+<li>BottomBar的总价会随数量和是否有优惠券动态变化，使用了优惠券的话会显示已优惠金额；</li>
+<li>优惠券有满减券和折扣券，满减券需要满足最低消费额度才能使用，减固定值；折扣券没有最低消费额度，但有打折上限。</li>
+<li>数量的选择有上下限，达到限制时加减按钮变灰。</li>
+<li>总价变动后不满足优惠券使用要求时，清除优惠券。</li>
+</ul>
+<h1 id="数据流动"><a href="#数据流动" class="headerlink" title="数据流动"></a>数据流动</h1><p>首先将页面划分为6块，每块对应一个Cell和CellModel，CellModel的数据直接给与Cell使用，数据的流动方向如箭头所示，由Model流动到Cell的方向指的是数据直接赋值到Model，再渲染到Cell上，例：选择时间和优惠券；由Cell流动到Model的方向指的是数据是由Cell产生，再传到Model，例：数量，服务备注。</p>
+<p>Model为整个订单的数据，但不包含控制Cell样式的数据，例：Cell高度是保存在CellModel。</p>
+<div align="center">
+    <img src="https://github.com/candlevista/resource/blob/master/RACDemo2.png?raw=true" alt="Sample"  width="50%" height="50%">
+    <p align="center">
+        <em>划分块</em>
+    </p>
+</div>
+
+
+
+
+
+<div align="center">
+    <img src="https://github.com/candlevista/resource/blob/master/RACDemo%E6%95%B0%E6%8D%AE%E6%B5%81%E5%8A%A8%E6%96%B9%E5%90%91.png?raw=true" alt="Sample"  width="80%" height="80%">
+    <p align="center">
+        <em>数据流动方向</em>
+    </p>
+</div>
+
+<h1 id="结合响应式"><a href="#结合响应式" class="headerlink" title="结合响应式"></a>结合响应式</h1><p>理顺了数据流动方向之后，我们可以结合ReactiveCocoa绑定<strong>动态变化的属性</strong>。</p>
+<h2 id="Model→CellModel→Cell"><a href="#Model→CellModel→Cell" class="headerlink" title="Model→CellModel→Cell"></a>Model→CellModel→Cell</h2><p>这种流动方向的Cell有选择时间和选择优惠券，点击时间Cell后弹出PickerView，待PickerView确认后date&#x2F;coupon数据就直接赋值给Model。</p>
+<p>这里需要分两步进行绑定，Model→CellModel，CellModel→Cell。</p>
+<p><strong>Model→CellModel</strong></p>
+<p>在<code>ICProductOrdersTableAdapter</code>的<code>initDatasAndBind</code>方法中进行了整个页面的Model→CellModel的绑定（除了底下的BottomBar）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// ICProductOrdersTableAdapter</span><br><span class="line"></span><br><span class="line">ICOrdersCellTimeModel *time = [[ICOrdersCellTimeModel alloc] init];	///&lt; CellModel</span><br><span class="line">time.title = @&quot;预约时间&quot;;</span><br><span class="line">time.titleDescription = @&quot;最少提前15分钟预约哦&quot;;</span><br><span class="line">time.selector = @&quot;toSelectTime&quot;;</span><br><span class="line"></span><br><span class="line">RAC(time, selectTime) = RACObserve(self.model, showBookTime);	///&lt; Model→CellModel的绑定</span><br></pre></td></tr></table></figure>
+
+<p>这里还有一个小细节，<code>showBookTime</code>字符串字段，这里我把数据加工放到了Model上做，即将PickerView返回的date数据转成string：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">// ICProductOrdersModel</span><br><span class="line"></span><br><span class="line">// self.time是PickerView给Model的数据，当time发生变化，会触发监听，map是把time重新映射成一个新值</span><br><span class="line">RAC(self, showBookTime) = [RACObserve(self, time) map:^id(NSDate *value) &#123;</span><br><span class="line">    if (!value) &#123;</span><br><span class="line">        return @&quot;请选择&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">    NSDateFormatter *format = [[NSDateFormatter alloc] init];</span><br><span class="line">    format.locale = [[NSLocale alloc] initWithLocaleIdentifier:@&quot;zh_CN&quot;];</span><br><span class="line">    [format setDateFormat:@&quot;a HH:mm&quot;];</span><br><span class="line">    return [format stringFromDate:value];</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
+
+<p>以上就是Model→CellModel这一步，优惠券同理。</p>
+<p><strong>CellModel→Cell</strong></p>
+<p>这一步操作在Cell的初始化中进行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// ICOrdersTimeTableViewCell</span><br><span class="line"></span><br><span class="line">- (void)initBind &#123;</span><br><span class="line">    RAC(self.rightTopLabel, text) = RACObserve(self, cellModel.selectTime);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里有一点需要注意，<code>RACObserve</code>的<code>cellModel</code>是放在逗号右侧，由于Cell是会复用的，新的<code>cellModel</code>赋值给Cell时能监听到，如果<code>cellModel</code>放在逗号左侧，仅仅是监听<code>selectTime</code>，但是<code>cellModel</code>会随着Cell的复用发生替换，新的<code>cellModel</code>并没有进行绑定，所以无法监听。</p>
+<p><strong>赋值</strong></p>
+<p>最后，PickerView返回了数据给Model，就能触发整个响应链，Cell自动渲染出来。优惠券的代码同理。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[ICPickerView showDatePickerWithMinDate:self.model.minDate maxDate:nil dateMode:UIDatePickerModeTime title:@&quot;&quot; handle:^(NSDate *date) &#123;</span><br><span class="line">     self.model.time = date;</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
+
+<h2 id="Cell→CellModel→Model"><a href="#Cell→CellModel→Model" class="headerlink" title="Cell→CellModel→Model"></a>Cell→CellModel→Model</h2><p>这种流动方向的Cell有选择数量和填写备注，其中选择数量通过触发+-号的buttonAction来改变count，用到了<code>RACCommand</code>，稍后介绍，这里先说一下填写备注Cell。</p>
+<p><strong>Cell→CellModel</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// ICOrdersInputTableViewCell</span><br><span class="line"></span><br><span class="line">// 注意：这里绑定方向与上面不同，由textView到model.content</span><br><span class="line">- (void)initBind &#123;</span><br><span class="line">    RAC(self, cellModel.content) = self.textView.rac_textSignal;	///&lt; Cell→CellModel绑定</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>CellModel→Model</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// ICProductOrdersTableAdapter</span><br><span class="line"></span><br><span class="line">ICOrdersCellInputModel *input = [[ICOrdersCellInputModel alloc] init];</span><br><span class="line">input.title = @&quot;服务备注&quot;;</span><br><span class="line">input.content = self.model.remark;</span><br><span class="line">input.placeHolder = @&quot;请输入备注（选填）&quot;;</span><br><span class="line"></span><br><span class="line">RAC(self.model, remark) = RACObserve(input, content);	///&lt; CellModel→Cell绑定</span><br></pre></td></tr></table></figure>
+
+<p><strong>赋值</strong></p>
+<p>当textView输入值时，就会触发响应链，Model会得到相应的值。</p>
+<h3 id="特殊处理（数量Cell）"><a href="#特殊处理（数量Cell）" class="headerlink" title="特殊处理（数量Cell）"></a>特殊处理（数量Cell）</h3><p><code>RACCommand</code>简单理解就是RAC中用于处理事件的类，<code>UIButton+RACCommandSupport</code>为UIButton拓展了<code>rac_command</code>属性，用法：Button触发点击事件时通知<code>RACCommand</code>对象。</p>
+<p>这里先定义好<code>RACCommand</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">// ICOrdersCellCountModel</span><br><span class="line"></span><br><span class="line">- (RACCommand *)plusCommand &#123;</span><br><span class="line">    if (!_plusCommand) &#123;</span><br><span class="line">        @weakify(self);</span><br><span class="line">        _plusCommand = [[RACCommand alloc] initWithSignalBlock:^RACSignal *(id input) &#123;</span><br><span class="line">            // 当每次触发点击时，RACCommand都会创建一个新的信号并return出去</span><br><span class="line">            return [RACSignal createSignal:^RACDisposable *(id&lt;RACSubscriber&gt; subscriber) &#123;</span><br><span class="line">                // 在这里其实可以做些异步操作，例如网络请求，得到结果后sendNext:出去</span><br><span class="line">                @strongify(self);</span><br><span class="line">                // 这里进行count++并发送结果出去，供订阅者使用</span><br><span class="line">                if (self.maxCount &amp;&amp; self.count &gt;= self.maxCount) &#123;</span><br><span class="line">                    </span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    self.count++;</span><br><span class="line">                &#125;</span><br><span class="line">                [subscriber sendNext:@(self.count)];</span><br><span class="line">                [subscriber sendCompleted];</span><br><span class="line">                return nil;</span><br><span class="line">            &#125;];</span><br><span class="line">        &#125;];</span><br><span class="line">    &#125;</span><br><span class="line">    return _plusCommand;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再赋值给Button：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// ICOrdersCountTableViewCell</span><br><span class="line"></span><br><span class="line">- (void)setModel:(ICOrdersCellCountModel *)model &#123;</span><br><span class="line">    _model = model;</span><br><span class="line">    self.leftLabel.text = model.title;</span><br><span class="line">    self.plusBtn.rac_command = model.plusCommand;</span><br><span class="line">    self.minusBtn.rac_command = model.minusCommand;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>到这里就完成了数量Cell的Cell→CellModel的绑定，之后的CellModel→Model参照上面就行了[^xr1]。</p>
+<h2 id="BottomBar处理"><a href="#BottomBar处理" class="headerlink" title="BottomBar处理"></a>BottomBar处理</h2><p>BottomBar动态变化的数据有两个，总价和优惠金额；</p>
+<p>总价需要根据两个值变化而变化：数量和优惠券面值，优惠额度同理：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">// ICProductOrdersModel</span><br><span class="line"></span><br><span class="line">@weakify(self);</span><br><span class="line">// 优惠打折订阅</span><br><span class="line">RAC(self, amount) = [RACSignal combineLatest:@[RACObserve(self, count), RACObserve(self, couponModel)] reduce:^id(NSNumber *count, ICMyCouponModel *coupon)&#123;</span><br><span class="line">    @strongify(self);</span><br><span class="line">    CGFloat amount = self.price*count.integerValue;</span><br><span class="line">    if (coupon) &#123;   // 有优惠券</span><br><span class="line">        switch (coupon.type) &#123;</span><br><span class="line">            case 0:     // 折扣券</span><br><span class="line">            &#123;</span><br><span class="line">                CGFloat off = amount *(1-coupon.discount/10.0);</span><br><span class="line">                off = off &gt; coupon.discountUpLimit ? coupon.discountUpLimit : off;</span><br><span class="line">                amount -= off;</span><br><span class="line">            &#125;</span><br><span class="line">                break;</span><br><span class="line">            case 1:     // 满减券</span><br><span class="line">                amount -= coupon.reduceMoney;</span><br><span class="line">                amount = amount &lt; 0 ? 0 : amount;</span><br><span class="line">                break;</span><br><span class="line">            default:</span><br><span class="line">                break;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    NSString *amountText = [NSString stringWithFormat:@&quot;￥%.2f&quot;, amount];</span><br><span class="line">    NSString *str = [NSString stringWithFormat:@&quot;%@：%@&quot;, @&quot;总价&quot;, amountText];</span><br><span class="line">    return [[NSAttributedString alloc] initWithString:str attributes:@&#123;NSForegroundColorAttributeName:[UIColor whiteColor], NSFontAttributeName:ICMediumWithSize(15*kScreenWidthRate)&#125;];</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
+
+<p>最后再将<code>ICProductOrdersModel</code>的<code>amount</code>，<code>offAmount</code>绑定到BottomBar就可以了：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// ICProductOrdersViewController</span><br><span class="line"></span><br><span class="line">- (void)initBind &#123;</span><br><span class="line">    RAC(self.bottomBar.amountLabel, attributedText) = RACObserve(self.model, amount);</span><br><span class="line">    RAC(self.bottomBar.couponLabel, attributedText) = RACObserve(self.model, offAmount);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="细节补充"><a href="#细节补充" class="headerlink" title="细节补充"></a>细节补充</h2><p><strong>数量Cell中加减号点击状态的显示</strong></p>
+<p>很简单，只需要监听CellModel中的count变化即可</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">// ICOrdersCountTableViewCell</span><br><span class="line"></span><br><span class="line">[RACObserve(self, model.count) subscribeNext:^(NSNumber *x) &#123;</span><br><span class="line">    @strongify(self);</span><br><span class="line">    if (x.integerValue &lt;= self.model.minCount) &#123;</span><br><span class="line">        [self.minusBtn setImage:[UIImage imageNamed:@&quot;ic_minus_g_14x14&quot;] forState:UIControlStateNormal];</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        [self.minusBtn setImage:[UIImage imageNamed:@&quot;ic_minus_g_sel&quot;] forState:UIControlStateNormal];</span><br><span class="line">    &#125;</span><br><span class="line">    if (x.integerValue &gt;= self.model.maxCount) &#123;</span><br><span class="line">        [self.plusBtn setImage:[UIImage imageNamed:@&quot;ic_plus_b_nor&quot;] forState:UIControlStateNormal];</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        [self.plusBtn setImage:[UIImage imageNamed:@&quot;ic_plus_b_14x14&quot;] forState:UIControlStateNormal];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
+
+<p><strong>数量变化后是否满足优惠券的使用要求</strong></p>
+<p>这里只需要判断总价是否满足满减券的最低额度（折扣券没有最低额度）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">// 数量变动，优惠券能否使用订阅</span><br><span class="line">[RACObserve(self, count) subscribeNext:^(NSNumber *count) &#123;</span><br><span class="line">    @strongify(self);</span><br><span class="line">    CGFloat amount = self.price*count.integerValue;</span><br><span class="line">    if (self.couponModel) &#123;   // 有优惠券</span><br><span class="line">        switch (self.couponModel.type) &#123;</span><br><span class="line">            case 1:     // 满减券</span><br><span class="line">                if (amount &lt; self.couponModel.thresholdAmount) &#123;</span><br><span class="line">                    // 总价低于优惠券最低额度，清除优惠券</span><br><span class="line">                    self.couponModel = nil;</span><br><span class="line">                &#125;</span><br><span class="line">                break;</span><br><span class="line">            default:</span><br><span class="line">                break;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;];</span><br></pre></td></tr></table></figure>
+
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><ul>
+<li>商品描述Cell没有动态变化的数据，因此不用绑定，直接赋值。</li>
+<li>所有绑定操作都只执行一次，建议在初始化之后进行绑定。</li>
+<li>订阅者不能是只读属性。</li>
+</ul>
+<p>最后附上Demo地址：<a href="https://github.com/candlevista/MyDemo">MyDemo</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/11/10/UITableView%E6%B8%B2%E6%9F%93%E5%A4%9A%E7%A7%8D%E6%A0%B7%E5%BC%8FCell%E7%9A%84%E6%96%B9%E6%A1%88/" rel="prev" title="UITableView渲染多种样式Cell的方案">
+      <i class="fa fa-chevron-left"></i> UITableView渲染多种样式Cell的方案
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/03/10/%E5%8F%8B%E7%9B%9FDebug%E8%87%AA%E6%A3%80%E6%B2%A1%E6%9C%89%E9%85%8D%E7%BD%AE%E5%BE%AE%E4%BF%A1%E5%9B%9E%E8%B0%83activity/" rel="next" title="友盟Debug自检没有配置微信回调activity">
+      友盟Debug自检没有配置微信回调activity <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E9%9C%80%E6%B1%82"><span class="nav-number">2.</span> <span class="nav-text">项目需求</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%B5%81%E5%8A%A8"><span class="nav-number">3.</span> <span class="nav-text">数据流动</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E5%90%88%E5%93%8D%E5%BA%94%E5%BC%8F"><span class="nav-number">4.</span> <span class="nav-text">结合响应式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Model%E2%86%92CellModel%E2%86%92Cell"><span class="nav-number">4.1.</span> <span class="nav-text">Model→CellModel→Cell</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cell%E2%86%92CellModel%E2%86%92Model"><span class="nav-number">4.2.</span> <span class="nav-text">Cell→CellModel→Model</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%B9%E6%AE%8A%E5%A4%84%E7%90%86%EF%BC%88%E6%95%B0%E9%87%8FCell%EF%BC%89"><span class="nav-number">4.2.1.</span> <span class="nav-text">特殊处理（数量Cell）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BottomBar%E5%A4%84%E7%90%86"><span class="nav-number">4.3.</span> <span class="nav-text">BottomBar处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%86%E8%8A%82%E8%A1%A5%E5%85%85"><span class="nav-number">4.4.</span> <span class="nav-text">细节补充</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F"><span class="nav-number">4.5.</span> <span class="nav-text">注意</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="火箭快餐"
+      src="/uploads/avatar2.png">
+  <p class="site-author-name" itemprop="name">火箭快餐</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">火箭快餐</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

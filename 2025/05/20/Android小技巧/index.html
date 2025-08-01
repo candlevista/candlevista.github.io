@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"9RQY3CC5KU","apiKey":"dd51b14f02d2eb01b654e5b8d79688b8","indexName":"My Blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Fragment 中使用 getContext() 要判空，因为 Fragment 不会强引用 context  Android有主线程和渲染线程，UI逻辑、用户反馈在主线程处理，图形渲染在渲染线程处理（iOS也相似，渲染交给图形处理单元（GPU）和Core Animation来异步地处理）  fastjson取字段要加trycatch（或者先判断有没字段），没有该字段时会抛异常  Androi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android小技巧">
+<meta property="og:url" content="http://yoursite.com/2025/05/20/Android%E5%B0%8F%E6%8A%80%E5%B7%A7/index.html">
+<meta property="og:site_name" content="火箭快餐的博客">
+<meta property="og:description" content="Fragment 中使用 getContext() 要判空，因为 Fragment 不会强引用 context  Android有主线程和渲染线程，UI逻辑、用户反馈在主线程处理，图形渲染在渲染线程处理（iOS也相似，渲染交给图形处理单元（GPU）和Core Animation来异步地处理）  fastjson取字段要加trycatch（或者先判断有没字段），没有该字段时会抛异常  Androi">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-05-19T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-01T15:06:46.383Z">
+<meta property="article:author" content="火箭快餐">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2025/05/20/Android%E5%B0%8F%E6%8A%80%E5%B7%A7/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Android小技巧 | 火箭快餐的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">火箭快餐的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2025/05/20/Android%E5%B0%8F%E6%8A%80%E5%B7%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar2.png">
+      <meta itemprop="name" content="火箭快餐">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="火箭快餐的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android小技巧
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-05-20 00:00:00" itemprop="dateCreated datePublished" datetime="2025-05-20T00:00:00+08:00">2025-05-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-08-01 23:06:46" itemprop="dateModified" datetime="2025-08-01T23:06:46+08:00">2025-08-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <ul>
+<li><p><code>Fragment</code> 中使用 <code>getContext()</code> 要判空，因为 <code>Fragment</code> 不会强引用 <code>context</code></p>
+</li>
+<li><p>Android有主线程和渲染线程，UI逻辑、用户反馈在主线程处理，图形渲染在渲染线程处理（iOS也相似，渲染交给图形处理单元（GPU）和Core Animation来异步地处理）</p>
+</li>
+<li><p>fastjson取字段要加trycatch（或者先判断有没字段），没有该字段时会抛异常</p>
+</li>
+<li><p><a href="https://blog.csdn.net/qq_18669217/article/details/53161970">Android：窗口的Flag设置作用</a>：</p>
+<p><code>getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);</code></p>
+</li>
+<li><p>理论上，图片放置的资源目录分辨率越高，其占用内存会越小，但是低分辨率图片会因此被拉伸，显示上出现失真。</p>
+</li>
+<li><p><code>invalidate()</code>与<code>postInvalidate()</code>都用于刷新View，主要区别是invalidate()在主线程中调用，若在子线程中使用需要配合handler；而postInvalidate()可在子线程中直接调用。</p>
+</li>
+<li><p>Android 系统只是限制了必须在同个线程内进行 ViewRootImpl 的创建和更新这两个操作，而不是要求必须在主线程进行，因此子线程也可以更新UI</p>
+</li>
+<li><p>图片资源保留一套的话建议保留xxhdpi，两套的话就加上xxxhdpi</p>
+</li>
+</ul>
+<span id="more"></span>
+
+<ul>
+<li><p>组件间填充空白可以用：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">View</span></span></span><br><span class="line"><span class="tag">	<span class="attr">android:layout_width</span>=<span class="string">&quot;0&quot;</span></span></span><br><span class="line"><span class="tag">	<span class="attr">android:layout_height</span>=<span class="string">&quot;0&quot;</span></span></span><br><span class="line"><span class="tag">	<span class="attr">android:layout_weight</span>=<span class="string">&quot;1&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>给控件添加<code>OnClickListener</code>可以阻止事件冒泡</p>
+</li>
+<li><p><code>context.getSystemService()</code>可以获取各种系统服务</p>
+</li>
+<li><p><a href="https://www.jianshu.com/p/41d3a684d90b">获取控件坐标</a></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> []location=<span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">2</span>];  </span><br><span class="line"><span class="comment">//获取控件在其父窗口中的坐标位置</span></span><br><span class="line">View.getLocationInWindow(<span class="type">int</span>[] location);</span><br><span class="line"><span class="comment">//获取控件在其整个屏幕上的坐标位置</span></span><br><span class="line">View.getLocationOnScreen(<span class="type">int</span>[] location);</span><br><span class="line"><span class="type">int</span> x=location[<span class="number">0</span>];</span><br><span class="line"><span class="type">int</span> y=location[<span class="number">1</span>];</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>控件layout前获取大小（测量大小）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">searchView.post(<span class="keyword">new</span> <span class="title class_">Runnable</span>() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">      <span class="comment">// 父容器不限制子空间尺寸</span></span><br><span class="line">      <span class="type">int</span> <span class="variable">width</span> <span class="operator">=</span> View.MeasureSpec.makeMeasureSpec(<span class="number">0</span>, View.MeasureSpec.UNSPECIFIED);	</span><br><span class="line">      <span class="type">int</span> <span class="variable">height</span> <span class="operator">=</span> View.MeasureSpec.makeMeasureSpec(<span class="number">0</span>, View.MeasureSpec.UNSPECIFIED);</span><br><span class="line">      searchView.measure(width, height);</span><br><span class="line">      <span class="type">int</span> <span class="variable">measuredWidth</span> <span class="operator">=</span> searchView.getMeasuredWidth();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>ScrollView中的布局不能撑满全屏：</p>
+<p><code>android:fillViewport=&quot;true&quot;</code></p>
+</li>
+<li><p>GridView去掉波纹效果：</p>
+<p><code>gridView.setSelector(new ColorDrawable(Color.TRANSPARENT));</code></p>
+</li>
+<li><p>透明色：Color.TRANSPARENT</p>
+</li>
+<li><p>字体加粗：<code>textView.getPaint().setFakeBoldText(true);</code></p>
+</li>
+<li><p>TextView富文本：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 方案一：</span></span><br><span class="line"><span class="comment">//设置Hello World前三个字符为红色,背景为蓝色</span></span><br><span class="line"><span class="type">SpannableString</span> <span class="variable">textSpanned1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SpannableString</span>(<span class="string">&quot;Hello World&quot;</span>);</span><br><span class="line">textSpanned1.setSpan(</span><br><span class="line">  <span class="keyword">new</span> <span class="title class_">ForegroundColorSpan</span>(Color.RED),	<span class="comment">// 颜色，文字大小用AbsoluteSizeSpan</span></span><br><span class="line">  <span class="number">0</span>, <span class="comment">// start</span></span><br><span class="line">  <span class="number">3</span>, <span class="comment">// end</span></span><br><span class="line">  Spanned.SPAN_INCLUSIVE_EXCLUSIVE);	<span class="comment">// 包括start，不包括end</span></span><br><span class="line">text1.setText(textSpanned1);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 方案二：</span></span><br><span class="line">text1.setText(Html.fromHtml(<span class="string">&quot;已选择：&lt;font color=&#x27;#E03236&#x27;&gt;&quot;</span> + (map == <span class="literal">null</span> ? <span class="number">0</span> : map.size()) + <span class="string">&quot;&lt;/font&gt; 个&quot;</span>));</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>EditText</code>设置光标位置：<code>et_name.setSelection(groupName.length());</code></p>
+</li>
+<li><p><code>EditText</code>获取焦点：<code>edit_keyword_view.requestFocus();</code></p>
+</li>
+<li><p><code>EditText</code>默认不要焦点：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// 在其他控件添加</span><br><span class="line">android:focusable=&quot;true&quot;</span><br><span class="line">android:focusableInTouchMode=&quot;true&quot;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>通过外部应用打开文件</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Intent</span> <span class="variable">intent</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Intent</span>();</span><br><span class="line">intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);</span><br><span class="line"><span class="comment">//设置intent的Action属性</span></span><br><span class="line">intent.setAction(Intent.ACTION_VIEW);</span><br><span class="line"><span class="comment">//获取文件file的MIME类型</span></span><br><span class="line"><span class="type">String</span> <span class="variable">type</span> <span class="operator">=</span> getMIMEType(fileType);</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    <span class="comment">//设置intent的data和Type属性。</span></span><br><span class="line">    intent.setDataAndType(<span class="comment">/*uri*/</span>Uri.fromFile(file), type);</span><br><span class="line">    <span class="comment">//跳转</span></span><br><span class="line">    startActivity(intent);     <span class="comment">//这里最好try一下，有可能会报错。 //比如说你的MIME类型是打开邮箱，但是你手机里面没装邮箱客户端，就会报错。</span></span><br><span class="line">&#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>AMS和ASM</p>
+<ul>
+<li>AMS：ActivityTaskManagerService安卓四大组件校验服务，负责管理应用程序的生命周期以及与Activity相关的任务，是一个 Binder 服务</li>
+<li>ASM：ASM 是一个广泛使用的Java字节码处理框架，它允许开发者动态生成类或者增强已有类的功能。</li>
+</ul>
+</li>
+<li><p>控件延迟操作</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">customRefreshLayout.postDelayed(new Runnable() &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void run() &#123;</span><br><span class="line">        customRefreshLayout.setRefreshing(true);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;, 100);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>setFilters</code>可以设置多个过滤器</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">InputFilter</span> <span class="variable">typeFilter</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">InputFilter</span>() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> CharSequence <span class="title function_">filter</span><span class="params">(CharSequence source, <span class="type">int</span> start, <span class="type">int</span> end, Spanned dest, <span class="type">int</span> dstart, <span class="type">int</span> dend)</span> &#123;</span><br><span class="line">        <span class="type">Pattern</span> <span class="variable">p</span> <span class="operator">=</span> Pattern.compile(<span class="string">&quot;[a-zA-Z|0-9|\u4E00-\u9FA5]+&quot;</span>);</span><br><span class="line">        <span class="type">Matcher</span> <span class="variable">m</span> <span class="operator">=</span> p.matcher(source.toString());</span><br><span class="line">        <span class="keyword">if</span> (!m.matches()) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 文字过滤器+长度过滤器</span></span><br><span class="line">edZlbh.setFilters(<span class="keyword">new</span> <span class="title class_">InputFilter</span>[]&#123;typeFilter, <span class="keyword">new</span> <span class="title class_">InputFilter</span>.LengthFilter(<span class="number">30</span>)&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>ImageView</code>设置圆角：可以嵌套<code>CardView</code></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// CardView属性，去掉阴影并设置圆角</span><br><span class="line">app:cardCornerRadius=&quot;6dp&quot;</span><br><span class="line">app:cardElevation=&quot;0dp&quot;</span><br><span class="line">app:cardUseCompatPadding=&quot;false&quot;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>getSupportFragmentManager</code> 与 <code>getChildFragmentManager</code></p>
+<ul>
+<li><p>getSupportFragmentManager:</p>
+<ul>
+<li><p>用于获取一个 FragmentManager 实例，该实例管理的是整个 Activity 中的所有 Fragment。</p>
+</li>
+<li><p>通常在 Activity 中使用，用于添加、移除或替换 Fragment。</p>
+</li>
+</ul>
+</li>
+<li><p>getChildFragmentManager:</p>
+<ul>
+<li><p>用于获取一个 FragmentManager 实例，该实例仅管理当前 Fragment 内部嵌套的子 Fragment。</p>
+</li>
+<li><p>通常在 Fragment 中使用，用于在 Fragment 内部添加、移除或替换子 Fragment（特别注意：嵌套Fragment或者ViewPager）。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>在视图布局完成后获取宽度：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">view.getViewTreeObserver().addOnGlobalLayoutListener(<span class="keyword">new</span> <span class="title class_">ViewTreeObserver</span>.OnGlobalLayoutListener() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onGlobalLayout</span><span class="params">()</span> &#123;</span><br><span class="line">      	<span class="comment">// 会多次触发，需要去掉监听</span></span><br><span class="line">        view.getViewTreeObserver().removeOnGlobalLayoutListener(<span class="built_in">this</span>);</span><br><span class="line">        <span class="type">int</span> <span class="variable">width</span> <span class="operator">=</span> view.getWidth();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>代码方式设置Drawable时需要同时设置图片大小</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Drawable</span> <span class="variable">mdra</span> <span class="operator">=</span> mContext.getResources().getDrawable(R.mipmap.icon);</span><br><span class="line">mdra.setBounds(<span class="number">0</span>, <span class="number">0</span>, mdra.getMinimumWidth(), mdra.getMinimumHeight());</span><br><span class="line">tv_zxmx.setCompoundDrawables(<span class="literal">null</span>, <span class="literal">null</span>, mdra, <span class="literal">null</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>切换到主线程：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 方法一</span></span><br><span class="line">runOnUiThread()</span><br><span class="line">  </span><br><span class="line"><span class="comment">// 方法二</span></span><br><span class="line"><span class="type">Handler</span> <span class="variable">handler</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Handler</span>(Looper.getMainLooper());</span><br><span class="line">handler.post(<span class="keyword">new</span> <span class="title class_">Runnable</span>() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// 在这里执行主线程的代码</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 方法三，post方式只与创建调用者的线程有关，即创建view时所在的线程有关，方法二同理</span></span><br><span class="line">view.post(<span class="keyword">new</span> <span class="title class_">Runnable</span>() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// 在这里执行主线程的代码</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>DialogFragment</code> 中弹起键盘会让整个页面抖动，可以在 <code>onStart()</code> 方法中添加：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onStart</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="built_in">super</span>.onStart();</span><br><span class="line">    <span class="type">Window</span> <span class="variable">window</span> <span class="operator">=</span> getDialog().getWindow();</span><br><span class="line">    <span class="comment">// 防止弹起键盘时抖动</span></span><br><span class="line">    window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/03/14/Realm%E9%80%9F%E6%9F%A5(React%20Native)/" rel="prev" title="Realm速查(React Native)">
+      <i class="fa fa-chevron-left"></i> Realm速查(React Native)
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/07/20/%E9%B8%BF%E8%92%99%E5%BC%80%E5%8F%91%E5%B0%8F%E6%8A%80%E5%B7%A7/" rel="next" title="鸿蒙开发小技巧">
+      鸿蒙开发小技巧 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="火箭快餐"
+      src="/uploads/avatar2.png">
+  <p class="site-author-name" itemprop="name">火箭快餐</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">火箭快餐</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
