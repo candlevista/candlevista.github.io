@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"9RQY3CC5KU","apiKey":"dd51b14f02d2eb01b654e5b8d79688b8","indexName":"My Blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Activity类似ViewController   切记，Android中的四大组件，只要你定义了，无论你用没用，都要在AndroidManifest.xml对 这个组件进行注册，不然运行时程序会直接退出，报ClassNotFindException… 注意onPause不能太耗时，因为这会影响到新Activity的显示，onPause必须先执行完，新Activity的onResume才会执行。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android学习笔记3">
+<meta property="og:url" content="http://yoursite.com/2024/03/25/Android%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/index.html">
+<meta property="og:site_name" content="火箭快餐的博客">
+<meta property="og:description" content="Activity类似ViewController   切记，Android中的四大组件，只要你定义了，无论你用没用，都要在AndroidManifest.xml对 这个组件进行注册，不然运行时程序会直接退出，报ClassNotFindException… 注意onPause不能太耗时，因为这会影响到新Activity的显示，onPause必须先执行完，新Activity的onResume才会执行。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://github.com/candlevista/resource/blob/master/18364230.jpeg?raw=true">
+<meta property="og:image" content="https://github.com/candlevista/resource/blob/master/11165797.jpeg?raw=true">
+<meta property="og:image" content="https://github.com/candlevista/resource/blob/master/317228632222.jpeg?raw=true">
+<meta property="article:published_time" content="2024-03-24T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-03T08:55:19.938Z">
+<meta property="article:author" content="火箭快餐">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/candlevista/resource/blob/master/18364230.jpeg?raw=true">
+
+<link rel="canonical" href="http://yoursite.com/2024/03/25/Android%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Android学习笔记3 | 火箭快餐的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">火箭快餐的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2024/03/25/Android%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B03/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.jpeg">
+      <meta itemprop="name" content="火箭快餐">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="火箭快餐的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android学习笔记3
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-03-25 00:00:00" itemprop="dateCreated datePublished" datetime="2024-03-25T00:00:00+08:00">2024-03-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-08-03 16:55:19" itemprop="dateModified" datetime="2025-08-03T16:55:19+08:00">2025-08-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Activity"><a href="#Activity" class="headerlink" title="Activity"></a>Activity</h1><p>类似ViewController</p>
+<p><img src="https://github.com/candlevista/resource/blob/master/18364230.jpeg?raw=true" alt="18364230"></p>
+<blockquote>
+<p>切记，Android中的四大组件，只要你定义了，无论你用没用，都要在AndroidManifest.xml对 这个组件进行注册，不然运行时程序会直接退出，报ClassNotFindException…</p>
+<p>注意onPause不能太耗时，因为这会影响到新Activity的显示，onPause必须先执行完，新Activity的onResume才会执行。</p>
+<p>如果B是透明主题又或则是个DialogActivity，则不会回调A的onStop；<br>onStop相当于viewDidDisappear</p>
+<p>app回到前台会触发activity的onResume</p>
+</blockquote>
+<h2 id="启动一个Activity的几种方式"><a href="#启动一个Activity的几种方式" class="headerlink" title="启动一个Activity的几种方式"></a>启动一个Activity的几种方式</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 最常见的：</span></span><br><span class="line">startActivity(<span class="keyword">new</span> <span class="title class_">Intent</span>(当前Act.<span class="built_in">this</span>,要启动的Act.class));</span><br><span class="line"><span class="comment">// 或</span></span><br><span class="line"><span class="type">Intent</span> <span class="variable">intent</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Intent</span>() ;</span><br><span class="line">intent.setClass(context, gotoClass);</span><br><span class="line">startActivity(intent) ;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 通过Intent的ComponentName：</span></span><br><span class="line"><span class="type">ComponentName</span> <span class="variable">cn</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ComponentName</span>(<span class="string">&quot;当前Act的全限定类名&quot;</span>,<span class="string">&quot;启动Act的全限定类名&quot;</span>) ;</span><br><span class="line"><span class="type">Intent</span> <span class="variable">intent</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Intent</span>() ;</span><br><span class="line">intent.setComponent(cn) ;</span><br><span class="line">startActivity(intent) ;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 初始化Intent时指定包名：</span></span><br><span class="line"><span class="type">Intent</span> <span class="variable">intent</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Intent</span>(<span class="string">&quot;android.intent.action.MAIN&quot;</span>);</span><br><span class="line">intent.setClassName(<span class="string">&quot;当前Act的全限定类名&quot;</span>,<span class="string">&quot;启动Act的全限定类名&quot;</span>);</span><br><span class="line">startActivity(intent);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 直接通过包名启动apk的：</span></span><br><span class="line"><span class="type">Intent</span> <span class="variable">intent</span> <span class="operator">=</span> getPackageManager().getLaunchIntentForPackage(<span class="string">&quot;apk第一个启动的Activity的全限定类名&quot;</span>) ;</span><br><span class="line"><span class="keyword">if</span>(intent != <span class="literal">null</span>) startActivity(intent) ;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 关闭当前页面</span></span><br><span class="line"><span class="built_in">this</span>.finish();</span><br></pre></td></tr></table></figure>
+
+<h2 id="Activity间的数据传递"><a href="#Activity间的数据传递" class="headerlink" title="Activity间的数据传递"></a>Activity间的数据传递</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 存</span></span><br><span class="line"><span class="type">Intent</span> <span class="variable">it1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Intent</span>(A.<span class="built_in">this</span>, B.class);</span><br><span class="line">it1.putExtra(<span class="string">&quot;key&quot;</span>, value);</span><br><span class="line">startActivity(it);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 取</span></span><br><span class="line"><span class="type">Intent</span> <span class="variable">it</span> <span class="operator">=</span> getIntent();</span><br><span class="line"><span class="type">String</span> <span class="variable">a</span> <span class="operator">=</span> it.getStringExtra(<span class="string">&quot;key&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 第二种方式存</span></span><br><span class="line"><span class="type">Intent</span> <span class="variable">it1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Intent</span>(A.<span class="built_in">this</span>, B.class);</span><br><span class="line"><span class="comment">//新建Bundle对象,并把数据写入</span></span><br><span class="line"><span class="type">Bundle</span> <span class="variable">bd</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Bundle</span>();</span><br><span class="line">bd.putCharSequence(<span class="string">&quot;key&quot;</span>,value);</span><br><span class="line"><span class="comment">//将数据包Bundle绑定到Intent上</span></span><br><span class="line">it.putExtras(bd);</span><br><span class="line">startActivity(it);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 第二种方式取</span></span><br><span class="line"><span class="type">Intent</span> <span class="variable">it</span> <span class="operator">=</span> getIntent();</span><br><span class="line"><span class="type">Bundle</span> <span class="variable">bd</span> <span class="operator">=</span> it.getExtras();</span><br><span class="line"><span class="comment">//按键值的方式取出Bundle中的数据</span></span><br><span class="line"><span class="type">String</span> <span class="variable">a</span> <span class="operator">=</span> bd.getCharSequence(<span class="string">&quot;key&quot;</span>).toString();</span><br></pre></td></tr></table></figure>
+
+<p><strong>后一个传回给前一个</strong></p>
+<ol>
+<li><p>使用<code>startActivityForResult(Intent intent, int requestCode)</code>来启动一个Activity</p>
+</li>
+<li><p>在启动的Activity中重写<code>onActivityResult(int requestCode, int resultCode, Intent data)</code>用于接收后一个Activity返回的数据：</p>
+<ul>
+<li><p>requestCode：上一个方法的值</p>
+</li>
+<li><p>resultCode是后一个Activity返回的标识</p>
+</li>
+<li><p>data：回传的数据</p>
+</li>
+</ul>
+</li>
+<li><p>在后一个Activity调用<code>setResult(int resultCode, Intent data)</code></p>
+</li>
+</ol>
+<h2 id="Task（任务栈）"><a href="#Task（任务栈）" class="headerlink" title="Task（任务栈）"></a>Task（任务栈）</h2><p>有点类似UINavigationController，但支持不同app的activity加入到同一个task中，task不能直接访问</p>
+<p><strong>&lt; activity &gt;中有关task的属性如下：</strong></p>
+<ul>
+<li>taskAffinity：栈标识</li>
+<li>allowTaskReparenting：如果为true， 那么它可以从一个Task（Task1）移到另外一个有相同Affinity的Task（Task2）中（Task2带到前台时）。</li>
+<li>launchMode：启动模式<ul>
+<li>standard(默认)：每次压栈都会new新对象，即使是同一个activity</li>
+<li>singleTop：栈顶activity与即将压栈activity相同时，不会new，activity会调用<code>onNewIntent()</code>，否则跟standard一样，</li>
+<li>singleTask：此模式启动的activity会被放入与它相同taskAffinity的任务栈中，如果没有相同taskAffinity的任务栈则创建新的任务栈再放入activity（此时就会存在两个任务栈，调起方的栈会变成后台栈，新建栈只有新的activity，点返回会直接回到桌面）；同一个栈中只有一个相同activity，复用同样调<code>onNewIntent()</code>；singleTask模式的Activity切换到栈顶会导致在它之上的栈内的Activity出栈。</li>
+<li>singleInstance：整个app中只有一个相同activity，复用同样调<code>onNewIntent()</code>，此模式启动的activity会单独分配一个栈</li>
+</ul>
+</li>
+<li>clearTaskOnLaunch：如果栈底Activity的这个属性被设置为true，一旦用户离开Task， 则 Task栈中的Activity将被清空到只剩下栈底activity。</li>
+<li>alwaysRetainTaskState：如果栈底Activity的这个属性被设置为true，所有Activity都被持有</li>
+<li>finishOnTaskLaunch：只针对设置的Activity，用户离开Task，该Activity销毁</li>
+</ul>
+<p><strong>java代码设置Flage</strong></p>
+<ul>
+<li>FLAG_ACTIVITY_CLEAR_TOP：具有此标记位的Activity，当它启动时，在同一个任务栈中所有位于它上面的Activity都要出栈。如果Activity是singleTask模式，则调用<code>onNewIntent()</code>；如果Activity是standard模式，自己及以上的Activity都出栈，再new一个新的自己入栈。</li>
+<li>FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS：具有这个标记的Activity不会出现在历史Activity的列表中，当某些情况下我们不希望用户通过历史列表回到我们的Activity的时候这个标记比较有用。它等同于在XML中指定Activity的属性android:excludeFromRecents&#x3D;”true”。</li>
+</ul>
+<h2 id="在初始化方法中获取view的大小"><a href="#在初始化方法中获取view的大小" class="headerlink" title="在初始化方法中获取view的大小"></a>在初始化方法中获取view的大小</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">	<span class="comment">// 有以下几种方法</span></span><br><span class="line"><span class="comment">// 1.通过onWindowFocusChanged回调，onWindowFocusChanged会被调用多次</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onWindowFocusChanged</span><span class="params">(<span class="type">boolean</span> hasFocus)</span> &#123;</span><br><span class="line">      <span class="built_in">super</span>.onWindowFocusChanged(hasFocus);</span><br><span class="line">      <span class="keyword">if</span> (hasFocus) &#123;</span><br><span class="line">              <span class="type">int</span> <span class="variable">width</span> <span class="operator">=</span> view.getMeasuredWidth();</span><br><span class="line">              <span class="type">int</span> <span class="variable">height</span> <span class="operator">=</span> view.getMeasuredHeight();</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2.通过view.post实现，类似异步主线程，代码会在延后触发</span></span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">onStart</span><span class="params">()</span> &#123;</span><br><span class="line">      <span class="built_in">super</span>.onStart();</span><br><span class="line">      view.post(<span class="keyword">new</span> <span class="title class_">Runnable</span>() &#123;</span><br><span class="line">              <span class="meta">@Override</span></span><br><span class="line">              <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">                      <span class="type">int</span> <span class="variable">width</span> <span class="operator">=</span> view.getMeasuredWidth();</span><br><span class="line">                      <span class="type">int</span> <span class="variable">height</span> <span class="operator">=</span> view.getMeasuredHeight();</span><br><span class="line">              &#125;</span><br><span class="line">      &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 3.当View树的状态发生改变或者View树内部的View的可见性发现改变时，onGlobalLayout方法将被回调，会触发多次</span></span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">onStart</span><span class="params">()</span> &#123;</span><br><span class="line">      <span class="built_in">super</span>.onStart();</span><br><span class="line">      <span class="type">ViewTreeObserver</span> <span class="variable">observer</span> <span class="operator">=</span> view.getViewTreeObserver();</span><br><span class="line">      observer.addOnGlobalLayoutListener(<span class="keyword">new</span> <span class="title class_">OnGlobalLayoutListener</span>() &#123;</span><br><span class="line">              <span class="meta">@SuppressWarnings(&quot;deprecation&quot;)</span></span><br><span class="line">              <span class="meta">@Override</span></span><br><span class="line">              <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onGlobalLayout</span><span class="params">()</span> &#123;</span><br><span class="line">                      view.getViewTreeObserver().removeGlobalOnLayoutListener(<span class="built_in">this</span>);</span><br><span class="line">                      <span class="type">int</span> <span class="variable">width</span> <span class="operator">=</span> view.getMeasuredWidth();</span><br><span class="line">                      <span class="type">int</span> <span class="variable">height</span> <span class="operator">=</span> view.getMeasuredHeight();</span><br><span class="line">              &#125;</span><br><span class="line">      &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 4.自定义容器view获取内容高度</span></span><br><span class="line"><span class="keyword">private</span> <span class="type">int</span> mInnerScrollHeight;</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line">  <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">onLayout</span><span class="params">(<span class="type">boolean</span> changed, <span class="type">int</span> l, <span class="type">int</span> t, <span class="type">int</span> r, <span class="type">int</span> b)</span> &#123;</span><br><span class="line">      <span class="type">int</span> <span class="variable">childTotalHeight</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">      mInnerScrollHeight = <span class="number">0</span>;</span><br><span class="line">      <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; getChildCount(); i++) &#123;</span><br><span class="line">          <span class="type">View</span> <span class="variable">child</span> <span class="operator">=</span> getChildAt(i);</span><br><span class="line">          <span class="type">int</span> <span class="variable">childWidth</span> <span class="operator">=</span> child.getMeasuredWidth();</span><br><span class="line">          <span class="type">int</span> <span class="variable">childHeight</span> <span class="operator">=</span> child.getMeasuredHeight();</span><br><span class="line">          child.layout(<span class="number">0</span>, childTotalHeight, childWidth, childHeight + childTotalHeight);</span><br><span class="line">          childTotalHeight += childHeight;</span><br><span class="line">          mInnerScrollHeight += childHeight;</span><br><span class="line">      &#125;</span><br><span class="line">      mInnerScrollHeight -= getMeasuredHeight();</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Activity跟window，view之间的关系"><a href="#Activity跟window，view之间的关系" class="headerlink" title="Activity跟window，view之间的关系"></a>Activity跟window，view之间的关系</h2><ul>
+<li><p>Activity在创建时会调用 <strong>attach()</strong> 方法初始化一个<strong>PhoneWindow(继承于Window)</strong>，<strong>每一个Activity都包含了唯一一个PhoneWindow</strong></p>
+</li>
+<li><p><strong>Window用于接收触摸事件，并传递给Activity</strong></p>
+</li>
+<li><p>Activity通过<strong>setContentView</strong>实际上是调用的 <strong>getWindow().setContentView</strong>将View设置到PhoneWindow上，而PhoneWindow内部是通过 <strong>WindowManager</strong> 的<strong>addView</strong>、<strong>removeView</strong>、<strong>updateViewLayout</strong>这三个方法来管理View，<strong>WindowManager本质是接口，最终由WindowManagerImpl实现</strong></p>
+</li>
+</ul>
+<h1 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h1><p><code>Service</code> 是一种可在后台执行长时间运行操作而不提供界面的应用组件。服务可由其他应用组件启动，而且即使用户切换到其他应用，服务仍将在后台继续运行。此外，组件可通过绑定到服务与之进行交互，甚至是执行进程间通信 (IPC)。例如，服务可在后台处理网络事务、播放音乐，执行文件 I&#x2F;O 或与内容提供程序进行交互。</p>
+<p>**尽管Service组件是用于执行后台计算的，但是它本身是运行在主线程中的，服务不会创建自己的线程。**如果服务将执行任何 CPU 密集型工作或阻止性操作（例如 MP3 播放或联网），则应通过在服务内创建新线程来完成这项工作。</p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 写服务类</span></span><br><span class="line"><span class="comment">// 2. AndroidManifest.xml注册Service</span></span><br><span class="line">&lt;!-- 配置Service组件,同时配置一个action --&gt;  </span><br><span class="line">&lt;service android:name=<span class="string">&quot;.TestService1&quot;</span>&gt;  </span><br><span class="line">    &lt;intent-filter&gt;  </span><br><span class="line">        &lt;action android:name=<span class="string">&quot;com.jay.example.service.TEST_SERVICE1&quot;</span>/&gt;  </span><br><span class="line">    &lt;/intent-filter&gt;  </span><br><span class="line">&lt;/service&gt;  </span><br><span class="line"><span class="comment">// 3. 启动服务</span></span><br><span class="line"><span class="type">Intent</span> <span class="variable">intent</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Intent</span>();  </span><br><span class="line">intent.setAction(<span class="string">&quot;com.jay.example.service.TEST_SERVICE1&quot;</span>);  </span><br><span class="line">startService(intent); </span><br><span class="line"><span class="comment">// 4. 停止服务</span></span><br><span class="line">stopService(intent);  </span><br><span class="line"></span><br><span class="line"><span class="comment">// 3-1. 声明绑定对象</span></span><br><span class="line"><span class="type">ServiceConnection</span> <span class="variable">conn</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ServiceConnection</span>() &#123;            </span><br><span class="line">    <span class="comment">//Activity与Service断开连接时回调该方法  </span></span><br><span class="line">    <span class="meta">@Override</span>  </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onServiceDisconnected</span><span class="params">(ComponentName name)</span> &#123;  </span><br><span class="line">        System.out.println(<span class="string">&quot;------Service DisConnected-------&quot;</span>);  </span><br><span class="line">    &#125;  </span><br><span class="line">    <span class="comment">//Activity与Service连接成功时回调该方法  </span></span><br><span class="line">    <span class="meta">@Override</span>  </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onServiceConnected</span><span class="params">(ComponentName name, IBinder service)</span> &#123;  </span><br><span class="line">        System.out.println(<span class="string">&quot;------Service Connected-------&quot;</span>);  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;;  </span><br><span class="line"><span class="comment">// 4-1. 绑定服务</span></span><br><span class="line"><span class="comment">// service: 通过该intent指定要启动的Service</span></span><br><span class="line"><span class="comment">// conn: ServiceConnection对象,用户监听访问者与Service间的连接情况</span></span><br><span class="line"><span class="comment">// flags: 指定绑定时是否自动创建Service(如果Service还未创建), 参数可以是0(不自动创建),BIND_AUTO_CREATE(自动创建)</span></span><br><span class="line"><span class="type">Intent</span> <span class="variable">intent</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Intent</span>();  </span><br><span class="line">intent.setAction(<span class="string">&quot;com.jay.example.service.TEST_SERVICE2&quot;</span>);  </span><br><span class="line">bindService(intent, conn, Service.BIND_AUTO_CREATE);  </span><br><span class="line"><span class="comment">// 5-1. 解绑服务</span></span><br><span class="line">unbindService(conn);</span><br></pre></td></tr></table></figure>
+
+<h2 id="生命周期"><a href="#生命周期" class="headerlink" title="生命周期"></a>生命周期</h2><p><img src="https://github.com/candlevista/resource/blob/master/11165797.jpeg?raw=true" alt="11165797"></p>
+<h2 id="启动方式"><a href="#启动方式" class="headerlink" title="启动方式"></a>启动方式</h2><p><strong>startService启动Service</strong>：调用 stopService()、stopSelf() 或 Service 自己调用 stopSelfResult()，服务才会停止</p>
+<p><strong>bindService启动Service</strong>：绑定对象全部解绑后服务就会停止</p>
+<p>**startForegroundService启动Service：**用于启动一个前台 Service，与 startService() 类似，但是启动的 Service 必须调用 startForeground() 方法，将 Service 放在前台通知栏中显示</p>
+<p>**startIntentService启动IntentService：**启动一个 IntentService，任务执行完毕后自动停止 Service。</p>
+<blockquote>
+<p>可以通过 stopService()、unbindService() 来停止 Service，或者在 Service 内部调用 stopSelf()、stopSelfResult() 来停止 Service。</p>
+</blockquote>
+<h2 id="IntentService"><a href="#IntentService" class="headerlink" title="IntentService"></a>IntentService</h2><p>会自动开启新线程的服务，它继承了Service并且它是一个抽象类，IntentService 任务执行完毕后自动停止 Service</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">LocalIntentService</span> <span class="keyword">extends</span> <span class="title class_">IntentService</span> &#123;</span><br><span class="line">     <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">TAG</span> <span class="operator">=</span> <span class="string">&quot;LocalIntentService&quot;</span>;</span><br><span class="line">     <span class="keyword">public</span> <span class="title function_">LocalIntentService</span><span class="params">()</span> &#123;</span><br><span class="line">         <span class="built_in">super</span>(TAG);</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="meta">@Override</span></span><br><span class="line">     <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">onHandleIntent</span><span class="params">(Intent intent)</span> &#123;</span><br><span class="line">         <span class="comment">// 执行后台任务</span></span><br><span class="line">     &#125;</span><br><span class="line">     <span class="meta">@Override</span></span><br><span class="line">     <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onDestroy</span><span class="params">()</span> &#123;             </span><br><span class="line">         <span class="built_in">super</span>.onDestroy();</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Activity与Service通信"><a href="#Activity与Service通信" class="headerlink" title="Activity与Service通信"></a>Activity与Service通信</h2><p>通信传递的对象就是Binder对象（类似数据模型）</p>
+<ol>
+<li><p>自定义Service中，自定义一个Binder类，然后将需要暴露的方法都写到该类中！</p>
+</li>
+<li><p>Service类中，实例化这个自定义Binder类，然后重写onBind()方法，将这个Binder对象返回！</p>
+</li>
+<li><p>Activity类中实例化一个ServiceConnection对象，重写onServiceConnected()方法，然后 获取Binder对象，就可以在Activity中调用Binder对象方法或读取属性！</p>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Service类</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SimpleService</span> <span class="keyword">extends</span> <span class="title class_">Service</span> &#123;</span><br><span class="line">      <span class="keyword">private</span> SimpleBinder mBinder;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onCreate</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>.onCreate();</span><br><span class="line">        Log.d(TAG, <span class="string">&quot;onCreate&quot;</span>);</span><br><span class="line">        mBinder = <span class="keyword">new</span> <span class="title class_">SimpleBinder</span>();</span><br><span class="line">    &#125;</span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> IBinder <span class="title function_">onBind</span><span class="params">(Intent intent)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (mBinder != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> mBinder;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">SimpleBinder</span> <span class="keyword">extends</span> <span class="title class_">Binder</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">doTask</span><span class="params">()</span> &#123;</span><br><span class="line">            Log.d(TAG, <span class="string">&quot;doTask&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Activity类</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">StartActivity</span> <span class="keyword">extends</span> <span class="title class_">AppCompatActivity</span> &#123;</span><br><span class="line">      <span class="comment">// 持有Binder</span></span><br><span class="line">      <span class="keyword">private</span> SimpleService.SimpleBinder mBinder;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="type">ServiceConnection</span> <span class="variable">mConnection</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ServiceConnection</span>() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onServiceConnected</span><span class="params">(ComponentName name, IBinder service)</span> &#123;</span><br><span class="line">              <span class="comment">// 获取binder</span></span><br><span class="line">            mBinder = (SimpleService.SimpleBinder) service;</span><br><span class="line">            mBinder.doTask();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">       <span class="comment">// ...注册服务</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="BroadcastReceiver-广播"><a href="#BroadcastReceiver-广播" class="headerlink" title="BroadcastReceiver(广播)"></a>BroadcastReceiver(广播)</h1><blockquote>
+<p>不要在广播里添加过多逻辑或者进行任何耗时操作,因为在广播中是不允许开辟线程的, 当onReceiver( )方法运行较长时间(超过10秒)还没有结束的话,那么程序会报错(ANR), 广播更多的时候扮演的是一个打开其他组件的角色,比如启动Service,Notification提示, Activity等！</p>
+</blockquote>
+<p><strong>广播的onReceive()方法一定在主线程中执行</strong></p>
+<p><strong>广播类型</strong></p>
+<p>标准广播：异步发送广播，所有接收者同时收到，优先级相同</p>
+<p>有序广播：根据优先级有序收到<code>intentFilter.setPriority()</code>，可阻断后续传播<code>abortBroadcast()</code></p>
+<h2 id="全局广播"><a href="#全局广播" class="headerlink" title="全局广播"></a>全局广播</h2><p>所有app都会收到的广播</p>
+<p><strong>动态注册</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">myReceiver = <span class="keyword">new</span> <span class="title class_">MyBRReceiver</span>();</span><br><span class="line"><span class="type">IntentFilter</span> <span class="variable">itFilter</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">IntentFilter</span>();</span><br><span class="line">itFilter.addAction(<span class="string">&quot;com.example.broadcasttest.MY_BROADCAST&quot;</span>);</span><br><span class="line">registerReceiver(myReceiver, itFilter);</span><br></pre></td></tr></table></figure>
+
+<p><strong>静态注册</strong></p>
+<p>此种形式的广播不需要应用启动就可以收到相应的广播</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">receiver</span> <span class="attr">android:name</span>=<span class="string">&quot;.MyBRReceiver&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">intent-filter</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">action</span> <span class="attr">android:name</span> = <span class="string">&quot;com.example.broadcasttest.MY_BROADCAST&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">intent-filter</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">receiver</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>发送广播</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sendBroadcast(<span class="keyword">new</span> <span class="title class_">Intent</span>(<span class="string">&quot;com.example.broadcasttest.MY_BROADCAST&quot;</span>));</span><br></pre></td></tr></table></figure>
+
+<p><strong>接收广播</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyBRReceiver</span> <span class="keyword">extends</span> <span class="title class_">BroadcastReceiver</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">ACTION_BOOT</span> <span class="operator">=</span> <span class="string">&quot;com.example.broadcasttest.MY_BROADCAST&quot;</span>;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onReceive</span><span class="params">(Context context, Intent intent)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span>(ACTION_BOOT.equals(intent.getAction()))</span><br><span class="line">        Toast.makeText(context, <span class="string">&quot;收到告白啦~&quot;</span>,Toast.LENGTH_SHORT).show();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>注销广播</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">unregisterReceiver(myReceiver);</span><br></pre></td></tr></table></figure>
+
+<p><strong>线程间通信</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在子线程中发送 broadcast</span></span><br><span class="line"><span class="type">Intent</span> <span class="variable">intent</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Intent</span>(<span class="string">&quot;com.example.UPDATE_UI&quot;</span>);</span><br><span class="line">sendBroadcast(intent);</span><br><span class="line"> <span class="comment">// 在主线程中注册 broadcastReceiver</span></span><br><span class="line"><span class="type">BroadcastReceiver</span> <span class="variable">receiver</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BroadcastReceiver</span>() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onReceive</span><span class="params">(Context context, Intent intent)</span> &#123;</span><br><span class="line">        <span class="comment">// 主线程要执行的代码</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line">registerReceiver(receiver, <span class="keyword">new</span> <span class="title class_">IntentFilter</span>(<span class="string">&quot;com.example.UPDATE_UI&quot;</span>));</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="本地广播"><a href="#本地广播" class="headerlink" title="本地广播"></a>本地广播</h2><p>只有自己app能收到广播</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 实例化localBroadcastManager来注册和发送广播</span></span><br><span class="line">localReceiver = <span class="keyword">new</span> <span class="title class_">MyBcReceiver</span>();</span><br><span class="line">intentFilter = <span class="keyword">new</span> <span class="title class_">IntentFilter</span>();</span><br><span class="line">intentFilter.addAction(<span class="string">&quot;com.jay.mybcreceiver.LOGIN_OTHER&quot;</span>);</span><br><span class="line">localBroadcastManager = LocalBroadcastManager.getInstance(<span class="built_in">this</span>);</span><br><span class="line">localBroadcastManager.registerReceiver(localReceiver, intentFilter);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 发送广播</span></span><br><span class="line"><span class="type">Intent</span> <span class="variable">intent</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Intent</span>(<span class="string">&quot;com.jay.mybcreceiver.LOGIN_OTHER&quot;</span>);</span><br><span class="line">localBroadcastManager.sendBroadcast(intent);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 接收广播与全局相同</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 注销广播</span></span><br><span class="line">localBroadcastManager.unregisterReceiver(localReceiver);</span><br></pre></td></tr></table></figure>
+
+<h1 id="ContentProvider-ContentResolver"><a href="#ContentProvider-ContentResolver" class="headerlink" title="ContentProvider&#x2F;ContentResolver"></a>ContentProvider&#x2F;ContentResolver</h1><p>通过Binder机制，用于应用间数据存储和共享数据</p>
+<p>自定义ContentProvider，只需要继承ContentProvider类并实现六个抽象方法即可：onCreate、query、update、insert、delete和getType。</p>
+<p>需要注意的是，query、update、insert、delete四大方法是存在多线程并发访问的，因此方法内部要做好线程同步。</p>
+<p>内部数据存取一般用SQLiteOpenHelper类来实现，也可以用List和Map等</p>
+<blockquote>
+<p><strong>ContentProvider</strong>：管理数据，提供数据的增删改查操作。</p>
+<p><strong>ContentResolver</strong>：ContentResolver可以为不同URI操作不同的ContentProvider中的数据，外部进程可以通过ContentResolver与ContentProvider进行交互。</p>
+<p><strong>ContentObserver</strong>：观察ContentProvider中的数据变化，并将变化通知给外界。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ContentProvider.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BookProvider</span> <span class="keyword">extends</span> <span class="title class_">ContentProvider</span> &#123;</span><br><span class="line">     <span class="meta">@Override</span></span><br><span class="line">     <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">onCreate</span><span class="params">()</span> &#123;</span><br><span class="line">         <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="meta">@Override</span></span><br><span class="line">     <span class="keyword">public</span> Cursor <span class="title function_">query</span><span class="params">(Uri uri,String[] projection,String selection,</span></span><br><span class="line"><span class="params">             String[] selectionArgs,String sortOrder)</span> &#123;</span><br><span class="line">         <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">     &#125;</span><br><span class="line"><span class="comment">// getType用来返回一个Uri请求所对应的MIME类型（媒体类型），比如图片、视频等，这个媒体类型还是有点复杂的，如果我们的应用不关注这个选项，可以直接在这个方法中返回null或者“*/*</span></span><br><span class="line">     <span class="meta">@Override</span></span><br><span class="line">     <span class="keyword">public</span> String <span class="title function_">getType</span><span class="params">(Uri uri)</span> &#123;           </span><br><span class="line">         <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="meta">@Override</span></span><br><span class="line">     <span class="keyword">public</span> Uri <span class="title function_">insert</span><span class="params">(Uri uri,ContentValues values)</span> &#123;</span><br><span class="line">       	<span class="comment">// ...修改数据操作</span></span><br><span class="line">       	<span class="comment">// 通知客户端更新</span></span><br><span class="line">       	getContext().getContentResolver().notifyChange(uri,<span class="literal">null</span>);</span><br><span class="line">         <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="meta">@Override</span></span><br><span class="line">     <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">delete</span><span class="params">(Uri uri,String selection,String[] selectionArgs)</span> &#123;</span><br><span class="line">         <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">     &#125;</span><br><span class="line">     <span class="meta">@Override</span></span><br><span class="line">     <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">update</span><span class="params">(Uri uri,ContentValues values,String selection,</span></span><br><span class="line"><span class="params">             String[] selectionArgs)</span> &#123;</span><br><span class="line">         <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注册provider</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">  // android:authorities是Content-Provider的唯一标识</span><br><span class="line">// android:permission是权限，还可以单独设置读写权限android:readPermission和android:writePermission，外界应用如果想访问BookProvider，就必须声明“com.ryg.PROVIDER”这个权限</span><br><span class="line"><span class="tag">&lt;<span class="name">provider</span></span></span><br><span class="line"><span class="tag">      <span class="attr">android:name</span>=<span class="string">&quot;.provider.BookProvider&quot;</span>        </span></span><br><span class="line"><span class="tag">      <span class="attr">android:authorities</span>=<span class="string">&quot;com.ryg.chapter_2.book.provider&quot;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">android:permission</span>=<span class="string">&quot;com.ryg.PROVIDER&quot;</span> &gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">provider</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>调用方代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Uri</span> <span class="variable">bookUri</span> <span class="operator">=</span> Uri.parse(<span class="string">&quot;content://com.ryg.chapter_2.book.provider/book&quot;</span>);</span><br><span class="line"><span class="type">ContentValues</span> <span class="variable">values</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ContentValues</span>();</span><br><span class="line">values.put(<span class="string">&quot;_id&quot;</span>,<span class="number">6</span>);</span><br><span class="line">values.put(<span class="string">&quot;name&quot;</span>,<span class="string">&quot;程序设计的艺术&quot;</span>);</span><br><span class="line">getContentResolver().insert(bookUri,values);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 通过ContentResolver的registerContentObserver方法来注册观察者，通过unregisterContentObserver方法来解除观察者</span></span><br><span class="line">contentResolver.registerContentObserver(bookUri, <span class="literal">true</span>, <span class="keyword">new</span> <span class="title class_">MyContentObserver</span>(handler));</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyContentObserver</span> <span class="keyword">extends</span> <span class="title class_">ContentObserver</span> &#123;</span><br><span class="line"></span><br><span class="line">    Handler mHandler;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">MyContentObserver</span><span class="params">(Handler handler)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(handler);</span><br><span class="line">        mHandler = handler;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onChange</span><span class="params">(<span class="type">boolean</span> selfChange)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>.onChange(selfChange);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onChange</span><span class="params">(<span class="type">boolean</span> selfChange, Uri uri)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>.onChange(selfChange, uri);</span><br><span class="line">        <span class="type">Message</span> <span class="variable">message</span> <span class="operator">=</span> Message.obtain();</span><br><span class="line">        message.obj = uri;</span><br><span class="line">        mHandler.sendMessage(message);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>调用方添加权限</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">uses-permission</span> <span class="attr">android:name</span>=<span class="string">&quot;com.ryg.PROVIDER&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="FileProvider"><a href="#FileProvider" class="headerlink" title="FileProvider"></a>FileProvider</h2><p><code>FileProvider</code> 是 <code>ContentProvider</code> 的一个特殊子类，它可以为应用内文件生成关联的 <code>content://</code> 内容 URI ，而不是 <code>file:///</code> 类型的 URI，内容 URI 允许授予对文件临时的读&#x2F;写访问权限</p>
+<p>例如分享本地文件给小红书，当小红书Activity销毁后文件权限也会被回收，也就是可以针对单个Activity或者Service，不像Linux的文件权限针对所有应用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 从uri取值</span></span><br><span class="line"><span class="type">InputStream</span> <span class="variable">inputStream</span> <span class="operator">=</span> getContentResolver().openInputStream(uri);</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://blog.csdn.net/yingaizhu/article/details/118972148">Android FileProvider 详解</a></p>
+<p><a href="https://juejin.cn/post/7012263426789474334#heading-1">Android-FileProvider-轻松掌握</a></p>
+<h1 id="Intent"><a href="#Intent" class="headerlink" title="Intent"></a>Intent</h1><p>Activity、服务和广播接收器均通过异步消息 Intent 进行启动</p>
+<p><strong>显式 Intent</strong>：指定Action并且声明要执行的常规操作，就是全套动作由自己处理</p>
+<p><strong>隐式 Intent</strong> ：不会指定特定的组件，而是声明要执行的常规操作，从而允许其他应用中的组件来处理。隐式调用需要Intent能够匹配目标组件的IntentFilter中所设置的过滤信息，如果不匹配将无法启动目标Activity。</p>
+<h2 id="属性"><a href="#属性" class="headerlink" title="属性"></a>属性</h2><ul>
+<li>ComponentName：目标组件的名称，由组件所在应用程序配置文件中设置的包名+组件的全限定类名组成，写法<code>Intent it = new Intent(OneActivity.this, TwoActivity.class)</code></li>
+<li>Action：一个<code>Intent</code>只能有一个<code>Action</code>，一个普通字符串，表示要<code>Intent</code>完成一个动作，具体由谁来完成由<code>intent-filter</code>决定，注意Java中的格式和xml中不同</li>
+<li>Category：一个<code>Intent</code>可以有多个<code>Category</code>，用于为<code>Action</code>提供额外的附加类别信息</li>
+<li>Data，Type(MIME类型)：<code>Data</code>为<code>Action</code>提供操作的数据，接收一个URI对象；<code>Type</code>用于指定<code>Data</code>的URI对应的MIME类型</li>
+<li>Extras：传输额外数据，Extras属性是Bundle类型</li>
+<li>Flags：</li>
+</ul>
+<h2 id="传递数据"><a href="#传递数据" class="headerlink" title="传递数据"></a>传递数据</h2><p><strong>传递对象</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 写，使用第三方库Gson序列化成json字符串</span></span><br><span class="line">Book book=<span class="keyword">new</span> <span class="title class_">Book</span>();</span><br><span class="line">book.setTitle(<span class="string">&quot;Java编程思想&quot;</span>);</span><br><span class="line">Author author=<span class="keyword">new</span> <span class="title class_">Author</span>();</span><br><span class="line">author.setId(<span class="number">1</span>);</span><br><span class="line">author.setName(<span class="string">&quot;Bruce Eckel&quot;</span>);</span><br><span class="line">book.setAuthor(author);</span><br><span class="line">Intent intent=<span class="keyword">new</span> <span class="title class_">Intent</span>(<span class="built_in">this</span>,SecondActivity.class);</span><br><span class="line">intent.putExtra(<span class="string">&quot;book&quot;</span>,<span class="keyword">new</span> <span class="title class_">Gson</span>().toJson(book));</span><br><span class="line">startActivity(intent);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 读</span></span><br><span class="line">String bookJson=getIntent().getStringExtra(<span class="string">&quot;book&quot;</span>);</span><br><span class="line"><span class="comment">// 读取可序列化数据</span></span><br><span class="line"><span class="type">ParcelableObj</span> <span class="variable">parObj</span> <span class="operator">=</span> getIntent().getParcelableExtra(<span class="string">&quot;lookHouseDetailBean&quot;</span>);</span><br><span class="line">Book book=<span class="keyword">new</span> <span class="title class_">Gson</span>().fromJson(bookJson,Book.class);</span><br><span class="line">Log.d(TAG,<span class="string">&quot;book title-&gt;&quot;</span>+book.getTitle());</span><br><span class="line">Log.d(TAG,<span class="string">&quot;book author name-&gt;&quot;</span>+book.getAuthor().getName());</span><br></pre></td></tr></table></figure>
+
+<h2 id="IntentFilter"><a href="#IntentFilter" class="headerlink" title="IntentFilter"></a>IntentFilter</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">  <span class="tag">&lt;<span class="name">activity</span></span></span><br><span class="line"><span class="tag">      <span class="attr">android:name</span>=<span class="string">&quot;com.ryg.chapter_1.ThirdActivity&quot;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">android:configChanges</span>=<span class="string">&quot;screenLayout&quot;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">android:label</span>=<span class="string">&quot;@string/app_name&quot;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">android:launchMode</span>=<span class="string">&quot;singleTask&quot;</span></span></span><br><span class="line"><span class="tag">      <span class="attr">android:taskAffinity</span>=<span class="string">&quot;com.ryg.task1&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">intent-filter</span>&gt;</span></span><br><span class="line">              <span class="tag">&lt;<span class="name">action</span> <span class="attr">android:name</span>=<span class="string">&quot;com.ryg.charpter_1.c&quot;</span>/&gt;</span></span><br><span class="line">              <span class="tag">&lt;<span class="name">action</span> <span class="attr">android:name</span>=<span class="string">&quot;com.ryg.charpter_1.d&quot;</span>/&gt;</span></span><br><span class="line">              <span class="tag">&lt;<span class="name">category</span> <span class="attr">android:name</span>=<span class="string">&quot;com.ryg.category.c&quot;</span>/&gt;</span></span><br><span class="line">              <span class="tag">&lt;<span class="name">category</span> <span class="attr">android:name</span>=<span class="string">&quot;com.ryg.category.d&quot;</span>/&gt;</span></span><br><span class="line">              <span class="tag">&lt;<span class="name">category</span> <span class="attr">android:name</span>=<span class="string">&quot;android.intent.category.DEFAULT&quot;</span>/&gt;</span></span><br><span class="line">              <span class="tag">&lt;<span class="name">data</span> <span class="attr">android:mimeType</span>=<span class="string">&quot;text/plain&quot;</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">intent-filter</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">activity</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- data的属性，可以分开单独一个标签写一个属性也可以在一个标签内写完全部，作用一样的 --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">data</span> <span class="attr">android:scheme</span>=<span class="string">&quot;string&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">android:host</span>=<span class="string">&quot;string&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">android:port</span>=<span class="string">&quot;string&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">android:path</span>=<span class="string">&quot;string&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">android:pathPattern</span>=<span class="string">&quot;string&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">android:pathPrefix</span>=<span class="string">&quot;string&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">android:mimeType</span>=<span class="string">&quot;string&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">  <span class="comment">// 满足上面规则的Intent</span></span><br><span class="line">  <span class="type">Intent</span> <span class="variable">intent</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Intent</span>(<span class="string">&quot;com.ryg.charpter_1.c&quot;</span>);</span><br><span class="line">  intent.addCategory(<span class="string">&quot;com.ryg.category.c&quot;</span>);</span><br><span class="line"><span class="comment">// data没有指定scheme，但是却有默认值，URI的默认值为content和file</span></span><br><span class="line">  intent.setDataAndType(Uri.parse(<span class="string">&quot;file://abc&quot;</span>),<span class="string">&quot;text/plain&quot;</span>);</span><br><span class="line">  startActivity(intent);</span><br></pre></td></tr></table></figure>
+
+<p>隐式Intent要启动四大组件需要满足IntentFilter的过滤规则，IntentFilter中的过滤信息有action、category、data</p>
+<ol>
+<li><p>action的匹配规则</p>
+<p>action的匹配要求Intent中的action存在且必须和过滤规则中的<strong>其中一个action</strong>相同。另外，action区分大小写，大小写不同字符串相同的action会匹配失败。必须有至少1个action</p>
+</li>
+<li><p>category的匹配规则</p>
+<p>category要求Intent可以没有category，但是如果你一旦有category，不管有几个，每个都要能够和过滤规则中的任何一个category相同。同时，为了我们的activity能够接收隐式调用，就必须在intent-filter中指定“android.intent.category.DEFAULT”这个category</p>
+</li>
+<li><p>data的匹配规则</p>
+<p>data的匹配规则和action类似</p>
+</li>
+</ol>
+<h3 id="外部应用打开自己的app"><a href="#外部应用打开自己的app" class="headerlink" title="外部应用打开自己的app"></a>外部应用打开自己的app</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">activity</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:name</span>=<span class="string">&quot;com.jjshome.chat.forward.ChatForwardActivity&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">intent-filter</span> <span class="attr">tools:ignore</span>=<span class="string">&quot;AppLinkUrlError&quot;</span>&gt;</span>      	</span><br><span class="line">        <span class="comment">&lt;!-- 在其他应用打开列表里显示 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">action</span> <span class="attr">android:name</span>=<span class="string">&quot;android.intent.action.VIEW&quot;</span> /&gt;</span>	</span><br><span class="line">        <span class="comment">&lt;!-- 发送列表里显示 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">action</span> <span class="attr">android:name</span>=<span class="string">&quot;android.intent.action.SEND&quot;</span> /&gt;</span>  </span><br><span class="line">        <span class="comment">&lt;!-- 表示这个组件可以作为默认的处理程序 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">category</span> <span class="attr">android:name</span>=<span class="string">&quot;android.intent.category.DEFAULT&quot;</span> /&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 允许 Activity 被浏览器安全调用，比如点击网页上的链接后启动该 Activity --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">category</span> <span class="attr">android:name</span>=<span class="string">&quot;android.intent.category.BROWSABLE&quot;</span> /&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 处理所有文件类型 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">data</span> <span class="attr">android:mimeType</span>=<span class="string">&quot;*/*&quot;</span> /&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">intent-filter</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">activity</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// ChatForwardActivity.java</span></span><br><span class="line"><span class="comment">// 外部应用分享文件到乐办公</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">onCreate</span><span class="params">(Bundle savedInstanceState)</span> &#123;</span><br><span class="line">  <span class="type">String</span> <span class="variable">action</span> <span class="operator">=</span> intent.getAction();</span><br><span class="line">  <span class="keyword">if</span> (Intent.ACTION_VIEW.equals(action)) &#123;</span><br><span class="line">      <span class="type">Uri</span> <span class="variable">uri</span> <span class="operator">=</span> intent.getData();</span><br><span class="line">      <span class="keyword">if</span> (uri != <span class="literal">null</span>) &#123;</span><br><span class="line">          <span class="comment">// uri可能是普通路径也可能是FileProvider，</span></span><br><span class="line">        	<span class="comment">// 如果以getContentResolver().query可能没法取到路径，</span></span><br><span class="line">	        <span class="comment">// 以流方式取数据好点：getContentResolver().openInputStream(uri)</span></span><br><span class="line">        	<span class="type">File</span> <span class="variable">file</span> <span class="operator">=</span> uriToFile(context, uri);</span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          ToastUtil.showSingletonToasts(<span class="string">&quot;无法识别该文件&quot;</span>);</span><br><span class="line">          finish();</span><br><span class="line">      &#125;</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (Intent.ACTION_SEND.equals(intent.getAction())) &#123;</span><br><span class="line">      <span class="type">Uri</span> <span class="variable">uri</span> <span class="operator">=</span> (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);</span><br><span class="line">      <span class="keyword">if</span> (uri != <span class="literal">null</span>) &#123;</span><br><span class="line">          <span class="comment">// uri可能是普通路径也可能是FileProvider</span></span><br><span class="line">      &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">          ToastUtil.showSingletonToasts(<span class="string">&quot;无法识别该文件&quot;</span>);</span><br><span class="line">          finish();</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> File <span class="title function_">uriToFile</span><span class="params">(Context context, Uri uri)</span> &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">filePath</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">if</span> (uri.getScheme().equals(<span class="string">&quot;content&quot;</span>)) &#123;</span><br><span class="line">        <span class="type">Cursor</span> <span class="variable">cursor</span> <span class="operator">=</span> context.getContentResolver().query(uri, <span class="keyword">new</span> <span class="title class_">String</span>[]&#123;MediaStore.MediaColumns.DATA&#125;, <span class="literal">null</span>, <span class="literal">null</span>, <span class="literal">null</span>);</span><br><span class="line">        <span class="keyword">if</span> (cursor != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">              <span class="keyword">if</span> (cursor.moveToFirst()) &#123;</span><br><span class="line">                  <span class="type">int</span> <span class="variable">columnIndex</span> <span class="operator">=</span> cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);</span><br><span class="line">                  filePath = cursor.getString(columnIndex);</span><br><span class="line">              &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">              e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">            cursor.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (uri.getScheme().equals(<span class="string">&quot;file&quot;</span>)) &#123;</span><br><span class="line">        filePath = uri.getPath();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (filePath != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">File</span>(filePath);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 如果无法通过上述方式获取文件路径，可以尝试将URI转换为临时文件</span></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="type">InputStream</span> <span class="variable">inputStream</span> <span class="operator">=</span> context.getContentResolver().openInputStream(uri);</span><br><span class="line">        <span class="type">File</span> <span class="variable">tempFile</span> <span class="operator">=</span> createTempFile(context);</span><br><span class="line">        <span class="type">FileOutputStream</span> <span class="variable">outputStream</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(tempFile);</span><br><span class="line">        <span class="type">byte</span>[] buffer = <span class="keyword">new</span> <span class="title class_">byte</span>[<span class="number">1024</span>];</span><br><span class="line">        <span class="type">int</span> length;</span><br><span class="line">        <span class="keyword">while</span> ((length = inputStream.read(buffer)) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            outputStream.write(buffer, <span class="number">0</span>, length);</span><br><span class="line">        &#125;</span><br><span class="line">        outputStream.flush();</span><br><span class="line">        outputStream.close();</span><br><span class="line">        inputStream.close();</span><br><span class="line">        <span class="keyword">return</span> tempFile;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> File <span class="title function_">createTempFile</span><span class="params">(Context context)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">    <span class="type">File</span> <span class="variable">storageDir</span> <span class="operator">=</span> context.getCacheDir();</span><br><span class="line">    <span class="keyword">return</span> File.createTempFile(<span class="string">&quot;temp_file&quot;</span>, <span class="string">&quot;.tmp&quot;</span>, storageDir);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><a href="https://blog.csdn.net/weixin_39654467/article/details/97812688">Android实现微信和QQ“在其他应用打开”列表中添加自己的应用，并获取文件路径。</a></p>
+<h2 id="PendingIntent"><a href="#PendingIntent" class="headerlink" title="PendingIntent"></a>PendingIntent</h2><p><strong>什么场景下会使用 PendingIntent？</strong></p>
+<ol>
+<li>系统通知消息的点击操作</li>
+<li>桌面Widget的点击操作</li>
+<li>系统闹钟操作</li>
+<li>第三方应用回调操作</li>
+</ol>
+<p><strong>获取PendingIntent对象有以下几种方式:</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">Context：context上下文，PendingIntent启动活动的上下文</span></span><br><span class="line"><span class="comment">int：requestCode请求码 ,发送者发送的请求码</span></span><br><span class="line"><span class="comment">Intent：intent意图：要加载活动的意图</span></span><br><span class="line"><span class="comment">int：flags 标记</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">flags具体值：</span></span><br><span class="line"><span class="comment">FLAG_ONE_SHOT：PendingIntent对象仅使用一次；</span></span><br><span class="line"><span class="comment">FLAG_NO_CREATE：如果PendingIntent对象不存在则返回null</span></span><br><span class="line"><span class="comment">FLAG_CANCEL_CURRENT：如果PendingIntent对象已存在，则取消原有的对象，创建新的PendingIntent对象</span></span><br><span class="line"><span class="comment">FLAG_UPDATE_CURRENT：如果PendingIntent对象已存在，则保留原有的对象，修改原有对象的属性数据</span></span><br><span class="line"><span class="comment">FLAG_IMMUTABLE：PendingIntent对象是不可变的</span></span><br><span class="line"><span class="comment">FLAG_MUTABLE：PendingIntent对象是可变的</span></span><br><span class="line"><span class="comment">另外其他Intent中支持的标记都可以在标记参数中使用。</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">PendingIntent.getActivity(Context, <span class="type">int</span>, Intent, <span class="type">int</span>) <span class="comment">// 启动活动</span></span><br><span class="line">PendingIntent.getActivities(Context, <span class="type">int</span>, Intent[], <span class="type">int</span>) <span class="comment">//启动多个活动，意图中为数组</span></span><br><span class="line">PendingIntent.getBroadcast(Context, <span class="type">int</span>, Intent, <span class="type">int</span>) <span class="comment">//启动广播</span></span><br><span class="line">PendingIntent.getService(Context, <span class="type">int</span>, Intent, <span class="type">int</span>) <span class="comment">//启动服务</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="Fragment"><a href="#Fragment" class="headerlink" title="Fragment"></a>Fragment</h1><p>Fragment需要依附Activity</p>
+<h2 id="生命周期-1"><a href="#生命周期-1" class="headerlink" title="生命周期"></a>生命周期</h2><img title="" src="https://github.com/candlevista/resource/blob/master/317228632222.jpeg?raw=true" alt="31722863">
+
+<h2 id="创建Fragment"><a href="#创建Fragment" class="headerlink" title="创建Fragment"></a>创建Fragment</h2><p><strong>静态加载</strong></p>
+<ol>
+<li>定义fragment布局，<code>fg_content.xml:</code></li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;utf-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">LinearLayout</span> <span class="attr">xmlns:android</span>=<span class="string">&quot;http://schemas.android.com/apk/res/android&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:orientation</span>=<span class="string">&quot;vertical&quot;</span> <span class="attr">android:layout_width</span>=<span class="string">&quot;match_parent&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">&quot;match_parent&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:background</span>=<span class="string">&quot;@color/bg_white&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">TextView</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:id</span>=<span class="string">&quot;@+id/txt_content&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_width</span>=<span class="string">&quot;match_parent&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:layout_height</span>=<span class="string">&quot;match_parent&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:gravity</span>=<span class="string">&quot;center&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:text</span>=<span class="string">&quot;呵呵&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:textColor</span>=<span class="string">&quot;@color/text_yellow&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:textSize</span>=<span class="string">&quot;20sp&quot;</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">LinearLayout</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>定义Fragment类</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Fragmentone</span> <span class="keyword">extends</span> <span class="title class_">Fragment</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> View <span class="title function_">onCreateView</span><span class="params">(LayoutInflater inflater, ViewGroup container,</span></span><br><span class="line"><span class="params">            Bundle savedInstanceState)</span> &#123;</span><br><span class="line">          <span class="comment">// 加载布局文件，并返回视图</span></span><br><span class="line">        <span class="type">View</span> <span class="variable">view</span> <span class="operator">=</span> inflater.inflate(R.layout.fg_content, container,<span class="literal">false</span>);</span><br><span class="line">        <span class="keyword">return</span> view;</span><br><span class="line">    &#125;   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>创建后在Activity的xml添加fragment标签即可</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- name属性是全限定类名 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">fragment</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:id</span>=<span class="string">&quot;@+id/fragment1&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:name</span>=<span class="string">&quot;com.jay.example.fragmentdemo.Fragmentone&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_width</span>=<span class="string">&quot;match_parent&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_height</span>=<span class="string">&quot;0dp&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:layout_weight</span>=<span class="string">&quot;1&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>动态加载</strong></p>
+<p>使用<code>FragmentManager</code>实现，<code>FragmentManager</code>可以<code>add()</code>和<code>replace()</code>来添加或修改Fragment</p>
+<ul>
+<li><code>add(要传入的容器，fragment对象)</code></li>
+<li><code>replace(被替换的布局标识，fragment对象)</code></li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MainActivity</span> <span class="keyword">extends</span> <span class="title class_">Activity</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">onCreate</span><span class="params">(Bundle savedInstanceState)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>.onCreate(savedInstanceState);</span><br><span class="line">        setContentView(R.layout.activity_main);</span><br><span class="line">        <span class="type">Fragment1</span> <span class="variable">f1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Fragment1</span>();</span><br><span class="line">        getSupportFragmentManager().beginTransaction().replace(R.id.LinearLayout1, f1).commit();</span><br><span class="line">    &#125;   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="FragmentManager"><a href="#FragmentManager" class="headerlink" title="FragmentManager"></a>FragmentManager</h2><p>用于管理Fragment</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 常用方法</span></span><br><span class="line"><span class="type">FragmentManager</span> <span class="variable">fManager</span> <span class="operator">=</span> getFragmentManager();</span><br><span class="line"><span class="type">FragmentTransaction</span> <span class="variable">fTransaction</span> <span class="operator">=</span> fManager.beginTransaction();</span><br><span class="line">fTransaction.add(R.id.ly_content,fg1);</span><br><span class="line">fTransaction.show(fg1);</span><br><span class="line">fTransaction.hide(fg1);</span><br></pre></td></tr></table></figure>
+
+<h2 id="数据传递"><a href="#数据传递" class="headerlink" title="数据传递"></a>数据传递</h2><p><strong>使用接口回调</strong></p>
+<p>Activity和Fragment各自实现对方定义的接口，调用接口方法传递数据</p>
+<p><strong>使用广播</strong></p>
+<p>Activity 可以通过发送广播的方式通知 Fragment 进行相应的操作，Fragment 可以注册广播接收器并在接收到广播时执行相应的操作。需要注意的是，使用广播进行通信可能会影响性能</p>
+<p><strong>使用事件总线</strong></p>
+<p>使用EventBus</p>
+<p><strong>直接调用方法</strong></p>
+<p>Activity直接调Fragment，Fragment通过getActivity()获取Activity，但耦合较高</p>
+<blockquote>
+<p>在Activity中创建Bundle数据包,调用Fragment实例的setArguments(bundle) 从而将Bundle数据包传给Fragment,然后Fragment中调用getArguments获得 Bundle对象,然后进行解析就可以了</p>
+</blockquote>
+<h1 id="DialogFragment"><a href="#DialogFragment" class="headerlink" title="DialogFragment"></a>DialogFragment</h1><p>有弹窗特性的fragment，自带半透明黑色背景</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onActivityCreated</span><span class="params">(Bundle savedInstanceState)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="literal">null</span> != savedInstanceState) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">super</span>.onActivityCreated(savedInstanceState);</span><br><span class="line">    <span class="type">Window</span> <span class="variable">window</span> <span class="operator">=</span> <span class="built_in">this</span>.getDialog().getWindow();</span><br><span class="line">    <span class="comment">//去掉dialog默认的padding</span></span><br><span class="line">    window.getDecorView().setPadding(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    WindowManager.<span class="type">LayoutParams</span> <span class="variable">lp</span> <span class="operator">=</span> window.getAttributes();</span><br><span class="line">    lp.width = WindowManager.LayoutParams.MATCH_PARENT;</span><br><span class="line">    lp.height = WindowManager.LayoutParams.WRAP_CONTENT;</span><br><span class="line">    window.setAttributes(lp);</span><br><span class="line">    window.setBackgroundDrawable(<span class="keyword">new</span> <span class="title class_">ColorDrawable</span>());</span><br><span class="line">    <span class="comment">//设置边距</span></span><br><span class="line">    <span class="type">DisplayMetrics</span> <span class="variable">dm</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DisplayMetrics</span>();</span><br><span class="line">    getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);</span><br><span class="line">    getDialog().getWindow().setLayout((<span class="type">int</span>) (dm.widthPixels * <span class="number">0.85</span>), ViewGroup.LayoutParams.WRAP_CONTENT);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="生命周期-2"><a href="#生命周期-2" class="headerlink" title="生命周期"></a>生命周期</h2><p>onCreateView：确认DialogFragment布局</p>
+<p>onViewCreated：页面创建完成，可以findViewById和绑定事件</p>
+<p>onActivityCreated：DialogFragment在Activity中创建完毕，马上准备展示</p>
+<p>onResume：弹窗展示</p>
+<p>onDismiss： 弹窗消失</p>
+<h2 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h2><p>创建一个DialogFragment有两个方法</p>
+<ul>
+<li>通过<em>onCreateView</em>来返回一个自己写好的view来完成，默认会在居中显示</li>
+<li>通过重新<em>onCreateDialog</em>方法， 返回一个创建的dialog对象</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/03/25/Android%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B04/" rel="prev" title="Android学习笔记4">
+      <i class="fa fa-chevron-left"></i> Android学习笔记4
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/03/25/Android%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B01/" rel="next" title="Android学习笔记1">
+      Android学习笔记1 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Activity"><span class="nav-number">1.</span> <span class="nav-text">Activity</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E4%B8%80%E4%B8%AAActivity%E7%9A%84%E5%87%A0%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="nav-number">1.1.</span> <span class="nav-text">启动一个Activity的几种方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Activity%E9%97%B4%E7%9A%84%E6%95%B0%E6%8D%AE%E4%BC%A0%E9%80%92"><span class="nav-number">1.2.</span> <span class="nav-text">Activity间的数据传递</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Task%EF%BC%88%E4%BB%BB%E5%8A%A1%E6%A0%88%EF%BC%89"><span class="nav-number">1.3.</span> <span class="nav-text">Task（任务栈）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8%E5%88%9D%E5%A7%8B%E5%8C%96%E6%96%B9%E6%B3%95%E4%B8%AD%E8%8E%B7%E5%8F%96view%E7%9A%84%E5%A4%A7%E5%B0%8F"><span class="nav-number">1.4.</span> <span class="nav-text">在初始化方法中获取view的大小</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Activity%E8%B7%9Fwindow%EF%BC%8Cview%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">1.5.</span> <span class="nav-text">Activity跟window，view之间的关系</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Service"><span class="nav-number">2.</span> <span class="nav-text">Service</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8"><span class="nav-number">2.1.</span> <span class="nav-text">使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="nav-number">2.2.</span> <span class="nav-text">生命周期</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E6%96%B9%E5%BC%8F"><span class="nav-number">2.3.</span> <span class="nav-text">启动方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IntentService"><span class="nav-number">2.4.</span> <span class="nav-text">IntentService</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Activity%E4%B8%8EService%E9%80%9A%E4%BF%A1"><span class="nav-number">2.5.</span> <span class="nav-text">Activity与Service通信</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#BroadcastReceiver-%E5%B9%BF%E6%92%AD"><span class="nav-number">3.</span> <span class="nav-text">BroadcastReceiver(广播)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A8%E5%B1%80%E5%B9%BF%E6%92%AD"><span class="nav-number">3.1.</span> <span class="nav-text">全局广播</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E5%B9%BF%E6%92%AD"><span class="nav-number">3.2.</span> <span class="nav-text">本地广播</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ContentProvider-ContentResolver"><span class="nav-number">4.</span> <span class="nav-text">ContentProvider&#x2F;ContentResolver</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#FileProvider"><span class="nav-number">4.1.</span> <span class="nav-text">FileProvider</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Intent"><span class="nav-number">5.</span> <span class="nav-text">Intent</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%9E%E6%80%A7"><span class="nav-number">5.1.</span> <span class="nav-text">属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%A0%E9%80%92%E6%95%B0%E6%8D%AE"><span class="nav-number">5.2.</span> <span class="nav-text">传递数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IntentFilter"><span class="nav-number">5.3.</span> <span class="nav-text">IntentFilter</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%96%E9%83%A8%E5%BA%94%E7%94%A8%E6%89%93%E5%BC%80%E8%87%AA%E5%B7%B1%E7%9A%84app"><span class="nav-number">5.3.1.</span> <span class="nav-text">外部应用打开自己的app</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#PendingIntent"><span class="nav-number">5.4.</span> <span class="nav-text">PendingIntent</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Fragment"><span class="nav-number">6.</span> <span class="nav-text">Fragment</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F-1"><span class="nav-number">6.1.</span> <span class="nav-text">生命周期</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAFragment"><span class="nav-number">6.2.</span> <span class="nav-text">创建Fragment</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FragmentManager"><span class="nav-number">6.3.</span> <span class="nav-text">FragmentManager</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E4%BC%A0%E9%80%92"><span class="nav-number">6.4.</span> <span class="nav-text">数据传递</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DialogFragment"><span class="nav-number">7.</span> <span class="nav-text">DialogFragment</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F-2"><span class="nav-number">7.1.</span> <span class="nav-text">生命周期</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA"><span class="nav-number">7.2.</span> <span class="nav-text">创建</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="火箭快餐"
+      src="/uploads/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">火箭快餐</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">火箭快餐</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

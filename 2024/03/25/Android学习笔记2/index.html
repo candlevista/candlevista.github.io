@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"9RQY3CC5KU","apiKey":"dd51b14f02d2eb01b654e5b8d79688b8","indexName":"My Blog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="事件分发机制事件分发机制大体可以分为三部分 事件生产 事件分发 事件消费  如果所有组件都不消费该事件，那么最终用户的行为就不会有任何响应 安卓没有iOS的hitTest，因此在一个事件序列中所有事件传递和响应方法都会触发多次   事件传递事件传递顺序：Activity -&gt; Window(实现类:PhoneWindow)-&gt;decor view(底层容器) -&gt; View  安">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android学习笔记2">
+<meta property="og:url" content="http://yoursite.com/2024/03/25/Android%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/index.html">
+<meta property="og:site_name" content="火箭快餐的博客">
+<meta property="og:description" content="事件分发机制事件分发机制大体可以分为三部分 事件生产 事件分发 事件消费  如果所有组件都不消费该事件，那么最终用户的行为就不会有任何响应 安卓没有iOS的hitTest，因此在一个事件序列中所有事件传递和响应方法都会触发多次   事件传递事件传递顺序：Activity -&gt; Window(实现类:PhoneWindow)-&gt;decor view(底层容器) -&gt; View  安">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://github.com/candlevista/resource/blob/master/a7b42a22d49e43269676fd7205a7ae17.webp?raw=true">
+<meta property="og:image" content="https://github.com/candlevista/resource/blob/master/WX20230313-175834@2x.png?raw=true">
+<meta property="article:published_time" content="2024-03-24T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-03T08:56:11.363Z">
+<meta property="article:author" content="火箭快餐">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/candlevista/resource/blob/master/a7b42a22d49e43269676fd7205a7ae17.webp?raw=true">
+
+<link rel="canonical" href="http://yoursite.com/2024/03/25/Android%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Android学习笔记2 | 火箭快餐的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">火箭快餐的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2024/03/25/Android%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B02/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/uploads/avatar.jpeg">
+      <meta itemprop="name" content="火箭快餐">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="火箭快餐的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android学习笔记2
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-03-25 00:00:00" itemprop="dateCreated datePublished" datetime="2024-03-25T00:00:00+08:00">2024-03-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-08-03 16:56:11" itemprop="dateModified" datetime="2025-08-03T16:56:11+08:00">2025-08-03</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android/" itemprop="url" rel="index"><span itemprop="name">Android</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="事件分发机制"><a href="#事件分发机制" class="headerlink" title="事件分发机制"></a>事件分发机制</h1><p><strong>事件分发机制大体可以分为三部分 事件生产 事件分发 事件消费</strong></p>
+<blockquote>
+<p>如果所有组件都不消费该事件，那么最终用户的行为就不会有任何响应</p>
+<p>安卓没有iOS的<code>hitTest</code>，因此在一个事件序列中所有事件传递和响应方法都会触发多次</p>
+</blockquote>
+<p><img src="https://github.com/candlevista/resource/blob/master/a7b42a22d49e43269676fd7205a7ae17.webp?raw=true" alt="a7b42a22d49e43269676fd7205a7ae17"></p>
+<h2 id="事件传递"><a href="#事件传递" class="headerlink" title="事件传递"></a>事件传递</h2><p>事件传递顺序：Activity -&gt; Window(实现类:PhoneWindow)-&gt;decor view(底层容器) -&gt; View</p>
+<blockquote>
+<p>安卓的Window在Activity之下，View之上，与iOS不同</p>
+<p>Window用于接收触摸事件，并传递给Activity</p>
+</blockquote>
+<p><strong><code>boolean dispatchTouchEvent(MotionEvent ev)</code></strong></p>
+<ol>
+<li><p>返回false：不再向下分发且从<strong>该View的上一级</strong>的onTouchEvent事件向上传递（不会执行自己的onTouchEvent）  </p>
+</li>
+<li><p>返回true：表示事件直接被消费，这个事件也就停止分发且不会逆向向上传递，直接结束了。  </p>
+</li>
+<li><p>返回super：事件将会继续向下分发，直到事件被消费为止。</p>
+</li>
+</ol>
+<p><strong><code>boolean onInterceptTouchEvent(MotionEvent ev)</code></strong></p>
+<p>view没有这个方法，只有ViewGroup有</p>
+<ol>
+<li><p>返回false&#x2F;super（默认）:不做此次拦截，事件将会正常向下分发，分发至下级的dispatchTouchEvent方法 再次判断是否分发事件。  </p>
+</li>
+<li><p>返回true:表示ViewGroup容器拦截后续事件，<strong>会执行该ViewGroup的onTouchEvent（）方法然后停止向下分发转而通过onTouchEvent（）向上传递，直到最终被消费</strong></p>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">// 伪代码，事件传递方法之间的关系  </span></span><br><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">dispatchTouchEvent</span><span class="params">(MotionEvent ev)</span> &#123;</span><br><span class="line">       <span class="type">boolean</span> <span class="variable">consume</span> <span class="operator">=</span> <span class="literal">false</span>;	<span class="comment">// 是否消费</span></span><br><span class="line">       <span class="keyword">if</span> (onInterceptTouchEvent(ev)) &#123;</span><br><span class="line">         			<span class="comment">// 事件响应</span></span><br><span class="line">               consume = onTouchEvent(ev);</span><br><span class="line">       &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">               consume = child.dispatchTouchEvent(ev);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">return</span> consume;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="事件响应"><a href="#事件响应" class="headerlink" title="事件响应"></a>事件响应</h2><p>响应顺序：<strong>监听器</strong>—&gt;<strong>view组件的回调方法</strong>—&gt;<strong>Activity的回调方法</strong></p>
+<p>响应事件可通过两种方式，<strong>重写view的响应方法</strong>或<strong>给view添加事件监听器</strong>，其中响应方法返回值</p>
+<ul>
+<li><p>返回true：立即消费掉事件，事件将不会向上传递，事件到此终止。</p>
+</li>
+<li><p>返回false&#x2F;super：不消费掉此次事件，事件将会层层向上传递，直到被消费。</p>
+</li>
+</ul>
+<p><strong>重写view的响应方法</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">①在该组件上触发屏幕事件: boolean onTouchEvent(MotionEvent event);</span><br><span class="line">②在该组件上按下某个按钮时: boolean onKeyDown(int keyCode,KeyEvent event);</span><br><span class="line">③松开组件上的某个按钮时: boolean onKeyUp(int keyCode,KeyEvent event);</span><br><span class="line">④长按组件某个按钮时: boolean onKeyLongPress(int keyCode,KeyEvent event);</span><br><span class="line">⑤键盘快捷键事件发生: boolean onKeyShortcut(int keyCode,KeyEvent event);</span><br><span class="line">⑥在组件上触发轨迹球屏事件: boolean onTrackballEvent(MotionEvent event);</span><br><span class="line">⑦当组件的焦点发生改变,和前面的6个不同,这个方法只能够在View中重写哦！ protected void onFocusChanged(boolean gainFocus, int direction, Rect previously FocusedRect)</span><br></pre></td></tr></table></figure>
+
+<p>例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//重写键盘按下触发的事件  </span></span><br><span class="line"><span class="meta">@Override</span>  </span><br><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">onKeyDown</span><span class="params">(<span class="type">int</span> keyCode, KeyEvent event)</span> &#123;  </span><br><span class="line">   <span class="built_in">super</span>.onKeyDown(keyCode,event);  </span><br><span class="line">   Log.i(TAG, <span class="string">&quot;onKeyDown方法被调用&quot;</span>);  </span><br><span class="line">   <span class="keyword">return</span> <span class="literal">true</span>;  </span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+
+<p><strong>给view添加事件监听器</strong></p>
+<p>OnTouchListener相关方法与属性:</p>
+<p>event.getAction &#x3D;&#x3D; MotionEvent.ACTION_DOWN：按下事件<br>event.getAction &#x3D;&#x3D; MotionEvent.ACTION_MOVE：移动事件<br>event.getAction &#x3D;&#x3D; MotionEvent.ACTION_UP：弹起事件</p>
+<p>event.getAction &#x3D;&#x3D; MotionEvent.ACTION_POINTER_DOWN:当屏幕上已经有一个点被按住，此时再按下其他点时触发</p>
+<p>event.getAction &#x3D;&#x3D; MotionEvent.ACTION_POINTER_UP:当屏幕上有多个点被按住，松开其中一个点时触发（即非最后一个点被放开时）</p>
+<blockquote>
+<p>getX&#x2F;getY返回的是相对于当前View左上角的x和y坐标，而getRawX&#x2F;getRawY返回的是相对于手机屏幕左上角的x和y坐标。</p>
+</blockquote>
+<p>例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//重写键盘按下触发的事件  </span></span><br><span class="line">btn.setOnKeyListener(<span class="keyword">new</span> <span class="title class_">View</span>.OnKeyListener() &#123;  </span><br><span class="line">    <span class="meta">@Override</span>  </span><br><span class="line">    <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">onKey</span><span class="params">(View v, <span class="type">int</span> keyCode, KeyEvent event)</span> &#123;  </span><br><span class="line">        <span class="keyword">if</span>(event.getAction() == KeyEvent.ACTION_DOWN)  &#123;  </span><br><span class="line">            Log.i(<span class="string">&quot;呵呵&quot;</span>,<span class="string">&quot;监听器的onKeyDown方法被调用&quot;</span>);  </span><br><span class="line">        &#125;  </span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;);  </span><br></pre></td></tr></table></figure>
+
+<h1 id="EventBus"><a href="#EventBus" class="headerlink" title="EventBus"></a>EventBus</h1><p>跟iOS的Notification差不多</p>
+<blockquote>
+<p>在 EventBus 3.0 之前消息处理的方法只能限定于 onEvent、onEventMainThread、onEventBackgroundThread和onEventAsync，它们分别代表4种线程模型。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//发送普通事件</span></span><br><span class="line">EventBus.getDefault().post(<span class="keyword">new</span> <span class="title class_">MessageEvent</span>(<span class="string">&quot;普通事件&quot;</span>));</span><br><span class="line"><span class="comment">//发送粘性事件，在事件发送之后注册的订阅者也能收到</span></span><br><span class="line">EventBus.getDefault().postSticky(<span class="keyword">new</span> <span class="title class_">MessageEvent</span>(<span class="string">&quot;粘性事件&quot;</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 注册监听</span></span><br><span class="line">EventBus.getDefault().register(<span class="built_in">this</span>);</span><br><span class="line"><span class="comment">// 注销监听</span></span><br><span class="line">EventBus.getDefault().unregister(<span class="built_in">this</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 接收通知方法</span></span><br><span class="line"><span class="comment">// 该方法有且只有一个参数，参数规范最好写一个event类专门用于eventbus（方便查找订阅者），不要传entity。</span></span><br><span class="line"><span class="comment">// 该方法必须是public修饰符修饰，不能用static关键字修饰，不能是抽象的（abstract）</span></span><br><span class="line"><span class="comment">// 该方法需要用@Subscribe注解进行修饰。</span></span><br><span class="line"><span class="comment">// 方法名可以任意，可以根据参数类型实现函数重载，EventBus会自动调用参数类型相同(MessageEvent)的方法，方法内可以不用再判断</span></span><br><span class="line"><span class="meta">@Subscribe(threadMode = ThreadMode.MAIN, sticky = false, priority = 1)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onReceiveMsg</span><span class="params">(MessageEvent event)</span> &#123;</span><br><span class="line">    textView.setText(event.content);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>threadMode</strong>有五种类型（POSTING、MAIN、MAIN_ORDERED、BACKGROUND、AYSNC）</p>
+<ul>
+<li><p>POSTING：接收者与发送者同线程</p>
+</li>
+<li><p>MAIN：接收者在主线程并同步阻塞</p>
+</li>
+<li><p>MAIN_ORDERED：接收者异步回到主线程</p>
+</li>
+<li><p>BACKGROUND：如果发布在子线程那么直接在发布线程调用，如果发布在主线程那么将开启一个子线程来调用</p>
+</li>
+<li><p>AYSNC：在子线程调用，总是开启一个新的线程来调用</p>
+</li>
+</ul>
+<p><strong>sticky</strong>的作用是在先post事件，在事件发送之后注册的订阅者也能收到，通过<code>removeStickyEvent</code>移除粘性事件。默认false</p>
+<p><strong>priority</strong>参数是int型，默认值是0，优先级</p>
+<h1 id="xml"><a href="#xml" class="headerlink" title="xml"></a>xml</h1><ul>
+<li><p>在xml布局中使用自定义的view时,需要使用”全限定类名”，例：<code>&lt;example.jay.com.mybutton.MyButton /&gt;</code></p>
+</li>
+<li><p>引用其他xml资源，用<code>@type/name</code></p>
+</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// bbuton_danger_rounded.xml</span><br><span class="line"><span class="tag">&lt;<span class="name">stroke</span> <span class="attr">android:width</span>=<span class="string">&quot;1dp&quot;</span> <span class="attr">android:color</span>=<span class="string">&quot;@color/bbutton_danger_disabled_edge&quot;</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">// color.xml</span><br><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;utf-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">resources</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">color</span> <span class="attr">name</span>=<span class="string">&quot;bbutton_danger_disabled_edge&quot;</span>&gt;</span>#a5d43f3a<span class="tag">&lt;/<span class="name">color</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">resources</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="drawable"><a href="#drawable" class="headerlink" title="drawable"></a>drawable</h1><p>安卓中有13种drawable，用于渲染控件的样式，Drawable常被用来作为View的背景使用</p>
+<ul>
+<li><p><strong>ColorDrawable</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;utf-8&quot;</span>?&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">resources</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">color</span> <span class="attr">name</span>=<span class="string">&quot;material_grey_100&quot;</span>&gt;</span>#fff5f5f5<span class="tag">&lt;/<span class="name">color</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">color</span> <span class="attr">name</span>=<span class="string">&quot;material_grey_300&quot;</span>&gt;</span>#ffe0e0e0<span class="tag">&lt;/<span class="name">color</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">resources</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>使用：@color&#x2F;xxx；java使用：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="variable">mycolor</span> <span class="operator">=</span> getResources().getColor(R.color.material_grey_100);    </span><br><span class="line">btn.setBackgroundColor(mycolor);  </span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>NinePatchDrawable(点九图)</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--pic9.xml--&gt;</span>  </span><br><span class="line"><span class="comment">&lt;!--参数依次为:引用的.9图片,是否对位图进行抖动处理--&gt;</span>  </span><br><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;utf-8&quot;</span>?&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">nine-patch</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:android</span>=<span class="string">&quot;http://schemas.android.com/apk/res/android&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">android:src</span>=<span class="string">&quot;@drawable/dule_pic&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">android:dither</span>=<span class="string">&quot;true&quot;</span>/&gt;</span>  </span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>ShapeDrawable</strong></p>
+<p>边框圆角等Drawable，根节点<code>&lt;shape&gt;</code>，子节点<code>&lt;size&gt;</code>,<code>&lt;solid&gt;</code>,<code>&lt;gradient&gt;</code>,<code>&lt;stroke&gt;</code>,<code>&lt;conner&gt;</code>,<code>&lt;padding&gt;</code></p>
+<p>&lt;**shape**&gt;:</p>
+<ul>
+<li>~ <strong>visible</strong>:设置是否可见</li>
+<li>~ <strong>shape</strong>:形状,可选:rectangle(矩形,包括正方形),oval(椭圆,包括圆),line(线段),ring(环形)</li>
+<li>~ <strong>innerRadiusRatio</strong>:当shape为ring才有效,表示环内半径所占半径的比率,如果设置了innerRadius, 他会被忽略</li>
+<li>~ <strong>innerRadius</strong>:当shape为ring才有效,表示环的内半径的尺寸</li>
+<li>~ <strong>thicknessRatio</strong>:当shape为ring才有效,表环厚度占半径的比率</li>
+<li>~ <strong>thickness</strong>:当shape为ring才有效,表示环的厚度,即外半径与内半径的差</li>
+<li>~ <strong>useLevel</strong>:当shape为ring才有效,表示是否允许根据level来显示环的一部分</li>
+</ul>
+<p>&lt;**size**&gt;:</p>
+<ul>
+<li>~ <strong>width</strong>:图形形状宽度</li>
+<li>~ <strong>height</strong>:图形形状高度</li>
+</ul>
+<p>&lt;**solid**&gt;</p>
+<ul>
+<li>~ <strong>color</strong>:背景填充色,设置solid后会覆盖gradient设置的所有效果!!!!!!</li>
+</ul>
+<p>&lt;**stroke**&gt;</p>
+<ul>
+<li>~ <strong>width</strong>:边框的宽度</li>
+<li>~ <strong>color</strong>:边框的颜色</li>
+<li>~ <strong>dashWidth</strong>:边框虚线段的长度</li>
+<li>~ <strong>dashGap</strong>:边框的虚线段的间距</li>
+</ul>
+<p>&lt;**conner**&gt;</p>
+<ul>
+<li>~ <strong>radius</strong>:圆角半径,适用于上下左右四个角</li>
+<li>~ <strong>topLeftRadius</strong>,<strong>topRightRadius</strong>,<strong>BottomLeftRadius</strong>,<strong>tBottomRightRadius</strong>: 依次是左上,右上,左下,右下的圆角值</li>
+</ul>
+<p>&lt;**padding**&gt;</p>
+<ul>
+<li>left,top,right,bottm:依次是左上右下方向上的边距!</li>
+</ul>
+</li>
+<li><p><strong>GradientDrawable</strong></p>
+<p>渐变Drawable，节点：<code>&lt;gradient&gt;</code></p>
+<ul>
+<li><code>android:angle</code>（仅适用于线性渐变）：指定线性渐变的角度，以度为单位。例如，0表示从左到右的渐变，90表示从上到下的渐变，45表示从左上到右下的渐变。</li>
+</ul>
+</li>
+<li><p><strong>BitmapDrawable</strong></p>
+<p>位图Drawable，节点：<code>&lt;bitmap&gt;</code></p>
+</li>
+<li><p><strong>InsetDrawable</strong></p>
+<p>表示把一个Drawable嵌入到另外一个Drawable的内部，并且在内部留一些间距, 类似margin，节点：<code>&lt;inset&gt;</code></p>
+<ul>
+<li><strong>insetLeft</strong>,<strong>insetRight</strong>,<strong>insetTop</strong>,<strong>insetBottm</strong>:设置左右上下的边距</li>
+</ul>
+</li>
+<li><p><strong>ClipDrawable</strong></p>
+<p>裁剪Drawable，支持水平和竖直2个方向(clipOrietntion)，从哪个位置开始(gravity)，裁剪一定比例(Level，0-10000)，节点：<code>&lt;clip&gt;</code></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;utf-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">clip</span></span></span><br><span class="line"><span class="tag">     <span class="attr">xmlns:android</span>=<span class="string">&quot;http://schemas.android.com/apk/res/android&quot;</span></span></span><br><span class="line"><span class="tag">     <span class="attr">android:drawable</span>=<span class="string">&quot;@drawable/drawable_resource&quot;</span></span></span><br><span class="line"><span class="tag">     <span class="attr">android:clipOrientation</span>=<span class="string">[</span>&quot;<span class="attr">horizontal</span>&quot; | &quot;<span class="attr">vertical</span>&quot;]</span></span><br><span class="line"><span class="tag">     <span class="attr">android:gravity</span>=<span class="string">[</span>&quot;<span class="attr">top</span>&quot; | &quot;<span class="attr">bottom</span>&quot;|&quot;<span class="attr">left</span>&quot; | &quot;<span class="attr">right</span>&quot;|&quot;<span class="attr">center_vertical</span>&quot; |</span></span><br><span class="line"><span class="tag">                      &quot;<span class="attr">fill_vertical</span>&quot;|&quot;<span class="attr">center_horizontal</span>&quot;|&quot;<span class="attr">fill_horizontal</span>&quot; |</span></span><br><span class="line"><span class="tag">                      &quot;<span class="attr">center</span>&quot; | &quot;<span class="attr">fill</span>&quot;|&quot;<span class="attr">clip_vertical</span>&quot;|&quot;<span class="attr">clip_horizontal</span>&quot;] /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://github.com/candlevista/resource/blob/master/WX20230313-175834@2x.png?raw=true" alt="WX20230313-175834@2x"></p>
+</li>
+<li><p><strong>RotateDrawable</strong></p>
+<p>旋转Drawable，节点：<code>&lt;rotate&gt;</code></p>
+</li>
+<li><p><strong>AnimationDrawable</strong></p>
+<p>帧动画Drawable，调用<code>star()</code>开始播放，<code>oneshot</code>:设置是否循环播放,false为循环播放!!! <code>duration</code>:帧间隔时间，根节点：<code>&lt;animation-list&gt;</code>，子节点：<code>&lt;item&gt;</code></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;utf-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">animation-list</span> <span class="attr">xmlns:android</span>=<span class="string">&quot;http://schemas.android.com/apk/res/android&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">android:oneshot</span>=<span class="string">&quot;false&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">item</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:drawable</span>=<span class="string">&quot;@mipmap/ic_pull_to_refresh_loading01&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:duration</span>=<span class="string">&quot;100&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">item</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:drawable</span>=<span class="string">&quot;@mipmap/ic_pull_to_refresh_loading02&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">android:duration</span>=<span class="string">&quot;100&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">animation-list</span>&gt;</span> </span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>LayerDrawable</strong></p>
+<p>层次化图形对象，包含一个Drawable数组，然后按照数组对应的顺序来绘制他们，<em>通过将不同的Drawable放置在不同的层上面从而达到一种叠加后的效果</em>，索引 值最大的Drawable会被绘制在最上层，节点：<code>&lt;layer-list&gt;</code></p>
+</li>
+<li><p><strong>TransitionDrawable</strong></p>
+<p>转场Drawable，管理两层的Drawable，根节点：<code>&lt;transition&gt;</code>，<code>startTransition</code>开始动画，<code>reverseTransition</code>反向播放</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">TextView</span> <span class="variable">textView</span> <span class="operator">=</span> (TextView) findViewById(R.id.test_transition);</span><br><span class="line"><span class="comment">// drawable已经设置到Background</span></span><br><span class="line"><span class="type">TransitionDrawable</span> <span class="variable">drawable</span> <span class="operator">=</span> (TransitionDrawable) textView.getBackground();</span><br><span class="line">drawable.startTransition(<span class="number">1000</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>LevelListDrawable</strong></p>
+<p>用来管理一组Drawable的，跟LayerDrawable类似，我们可以为里面的drawable设置不同的level，当他们绘制的时候，会根据level属性值获取对应的drawable绘制到画布上，根节点：<code>&lt;level-list&gt;</code></p>
+</li>
+<li><p><strong>StateListDrawable</strong></p>
+<p>状态Drawable，根节点：<code>&lt;selctor&gt;</code></p>
+<ul>
+<li><strong>drawable</strong>:引用的Drawable位图,我们可以把他放到最前面,就表示组件的正常状态~</li>
+<li><strong>state_focused</strong>:是否获得焦点</li>
+<li><strong>state_window_focused</strong>:是否获得窗口焦点</li>
+<li><strong>state_enabled</strong>:控件是否可用</li>
+<li><strong>state_checkable</strong>:控件可否被勾选,eg:checkbox</li>
+<li><strong>state_checked</strong>:控件是否被勾选</li>
+<li><strong>state_selected</strong>:控件是否被选择,针对有滚轮的情况</li>
+<li><strong>state_pressed</strong>:控件是否被按下</li>
+<li><strong>state_active</strong>:控件是否处于活动状态,eg:slidingTab</li>
+<li><strong>state_single</strong>:控件包含多个子控件时,确定是否只显示一个子控件</li>
+<li><strong>state_first</strong>:控件包含多个子控件时,确定第一个子控件是否处于显示状态</li>
+<li><strong>state_middle</strong>:控件包含多个子控件时,确定中间一个子控件是否处于显示状态</li>
+<li><strong>state_last</strong>:控件包含多个子控件时,确定最后一个子控件是否处于显示状态</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;utf-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">selector</span> <span class="attr">xmlns:android</span>=<span class="string">&quot;http://schemas.android.com/apk/res/android&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">item</span> <span class="attr">android:state_enabled</span>=<span class="string">&quot;true&quot;</span> <span class="attr">android:state_pressed</span>=<span class="string">&quot;true&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">shape</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">corners</span></span></span><br><span class="line"><span class="tag">                <span class="attr">android:bottomLeftRadius</span>=<span class="string">&quot;6dp&quot;</span></span></span><br><span class="line"><span class="tag">                <span class="attr">android:bottomRightRadius</span>=<span class="string">&quot;0dp&quot;</span></span></span><br><span class="line"><span class="tag">                <span class="attr">android:topLeftRadius</span>=<span class="string">&quot;0dp&quot;</span></span></span><br><span class="line"><span class="tag">                <span class="attr">android:topRightRadius</span>=<span class="string">&quot;0dp&quot;</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">solid</span> <span class="attr">android:color</span>=<span class="string">&quot;#F1F1F1&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">shape</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">item</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">item</span> <span class="attr">android:state_enabled</span>=<span class="string">&quot;true&quot;</span> <span class="attr">android:state_pressed</span>=<span class="string">&quot;false&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">shape</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">corners</span></span></span><br><span class="line"><span class="tag">                <span class="attr">android:bottomLeftRadius</span>=<span class="string">&quot;6dp&quot;</span></span></span><br><span class="line"><span class="tag">                <span class="attr">android:bottomRightRadius</span>=<span class="string">&quot;0dp&quot;</span></span></span><br><span class="line"><span class="tag">                <span class="attr">android:topLeftRadius</span>=<span class="string">&quot;0dp&quot;</span></span></span><br><span class="line"><span class="tag">                <span class="attr">android:topRightRadius</span>=<span class="string">&quot;0dp&quot;</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">solid</span> <span class="attr">android:color</span>=<span class="string">&quot;#FFFFFF&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">shape</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">item</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">selector</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>Item</strong></p>
+<p><code>&lt;item&gt;</code>标签可以理解为给当前drawable赋值的属性（如textColor），因此可以添加属性支持的值，如</p>
+<p><code>&lt;item android:color=&quot;@color/black&quot;/&gt;</code></p>
+</li>
+</ul>
+<h1 id="AsyncTask"><a href="#AsyncTask" class="headerlink" title="AsyncTask"></a>AsyncTask</h1><p>异步操作，会创建子线程队列</p>
+<blockquote>
+<p>AsyncTask并不适合进行特别耗时的后台任务，对于特别耗时的任务来说，建议使用线程池。</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 步骤1：创建AsyncTask子类</span></span><br><span class="line"><span class="comment">  * 注： </span></span><br><span class="line"><span class="comment">  *   a. 继承AsyncTask类</span></span><br><span class="line"><span class="comment">  *   b. 为3个泛型参数指定类型；若不使用，可用java.lang.Void类型代替</span></span><br><span class="line"><span class="comment">  *   c. 根据需求，在AsyncTask子类内实现核心方法</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">class</span> <span class="title class_">MyTask</span> <span class="keyword">extends</span> <span class="title class_">AsyncTask</span>&lt;Params, Progress, Result&gt; &#123;</span><br><span class="line"></span><br><span class="line">        ....</span><br><span class="line"></span><br><span class="line">      <span class="comment">// 方法1：onPreExecute（）</span></span><br><span class="line">      <span class="comment">// 作用：在主线程中执行 线程任务前的操作</span></span><br><span class="line">      <span class="comment">// 注：根据需求复写</span></span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">onPreExecute</span><span class="params">()</span> &#123;</span><br><span class="line">           ...</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">      <span class="comment">// 方法2：doInBackground（）</span></span><br><span class="line">      <span class="comment">// 作用：接收输入参数、执行任务中的耗时操作、返回 线程任务执行的结果（返回类型可以自己定）</span></span><br><span class="line">      <span class="comment">// 注：必须复写，从而自定义线程任务</span></span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="keyword">protected</span> String <span class="title function_">doInBackground</span><span class="params">(String... params)</span> &#123;</span><br><span class="line">						<span class="comment">// params是个数组</span></span><br><span class="line">            ...<span class="comment">// 自定义的线程任务</span></span><br><span class="line"></span><br><span class="line">            <span class="comment">// 可调用publishProgress（）显示进度, 之后将执行onProgressUpdate（）</span></span><br><span class="line">             publishProgress(count);</span><br><span class="line"></span><br><span class="line">         &#125;</span><br><span class="line"></span><br><span class="line">      <span class="comment">// 方法3：onProgressUpdate（）</span></span><br><span class="line">      <span class="comment">// 作用：在主线程 显示线程任务执行的进度</span></span><br><span class="line">      <span class="comment">// 注：根据需求复写</span></span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">onProgressUpdate</span><span class="params">(Integer... progresses)</span> &#123;</span><br><span class="line">            ...</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">      <span class="comment">// 方法4：onPostExecute（）</span></span><br><span class="line">      <span class="comment">// 作用：接收线程任务执行结果、将执行结果显示到UI组件</span></span><br><span class="line">      <span class="comment">// 注：必须复写，从而自定义UI操作</span></span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">      <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">onPostExecute</span><span class="params">(String result)</span> &#123;</span><br><span class="line"></span><br><span class="line">         ...<span class="comment">// UI操作</span></span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">      <span class="comment">// 方法5：onCancelled()</span></span><br><span class="line">      <span class="comment">// 作用：将异步任务设置为：取消状态</span></span><br><span class="line">      <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">protected</span> <span class="keyword">void</span> <span class="title function_">onCancelled</span><span class="params">()</span> &#123;</span><br><span class="line">        ...</span><br><span class="line">        &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 步骤2：创建AsyncTask子类的实例对象（即 任务实例）</span></span><br><span class="line"><span class="comment">  * 注：AsyncTask子类的实例必须在UI线程中创建</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="type">MyTask</span> <span class="variable">mTask</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyTask</span>();</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 步骤3：手动调用execute(Params... params) 从而执行异步线程任务</span></span><br><span class="line"><span class="comment">  * 注：</span></span><br><span class="line"><span class="comment">  *    a. 必须在UI线程中调用</span></span><br><span class="line"><span class="comment">  *    b. 同一个AsyncTask实例对象只能执行1次，若执行第2次将会抛出异常</span></span><br><span class="line"><span class="comment">  *    c. 执行任务中，系统会自动调用AsyncTask的一系列方法：onPreExecute() 、doInBackground()、onProgressUpdate() 、onPostExecute() </span></span><br><span class="line"><span class="comment">  *    d. 不能手动调用上述方法</span></span><br><span class="line"><span class="comment">  *    e. 该方法是串行执行，AsyncTask内部有静态对象使用synchronized锁去执行任务，即使是实例化多个task，他们之间也是串行执行</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  mTask.execute(params);</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  *  该方法是并行执行，多个实例化对象分别执行</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  mTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, <span class="string">&quot;&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<h1 id="Adapter"><a href="#Adapter" class="headerlink" title="Adapter"></a>Adapter</h1><p><strong>ArrayAdapter</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 入参：1：上下文  2.cell的布局文件  3.数据源</span></span><br><span class="line">ArrayAdapter &lt;String&gt; adapter = <span class="keyword">new</span> <span class="title class_">ArrayAdapter</span>&lt;String(<span class="built_in">this</span>,android.R.layout.simple_expandable_list_item_1,str);</span><br></pre></td></tr></table></figure>
+
+<p><strong>SimpleAdapter</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 入参：</span></span><br><span class="line"><span class="comment">// 1：上下文</span></span><br><span class="line"><span class="comment">// 2：数据源，一般都是HashMap构成的List </span></span><br><span class="line"><span class="comment">// 3：cell的布局文件</span></span><br><span class="line"><span class="comment">// 4：HashMap的key</span></span><br><span class="line"><span class="comment">// 5：影射到对应的控件id</span></span><br><span class="line"><span class="type">SimpleAdapter</span> <span class="variable">myAdapter</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SimpleAdapter</span>(getApplicationContext(), </span><br><span class="line">                                            listItems, </span><br><span class="line">                                            R.layout.list_item, </span><br><span class="line">                                            <span class="keyword">new</span> <span class="title class_">String</span>[]&#123;<span class="string">&quot;tximage&quot;</span>, <span class="string">&quot;name&quot;</span>&#125;, </span><br><span class="line">                                            <span class="keyword">new</span> <span class="title class_">int</span>[]&#123;R.id.imgtou, R.id.name&#125;);</span><br></pre></td></tr></table></figure>
+
+<p><strong>BaseAdapter</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// BaseAdapter，必须用子类继承，跟UITableView代理实现很像</span></span><br><span class="line"><span class="comment">// 必须重写4个方法</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">int</span> <span class="title function_">getCount</span><span class="params">()</span> <span class="comment">//这个方法返回了在适配器中所代表的数据集合的条目数</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> Object <span class="title function_">getItem</span><span class="params">(<span class="type">int</span> position)</span> <span class="comment">//这个方法返回了数据集合中与指定索引position对应的数据项</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="type">long</span> <span class="title function_">getItemId</span><span class="params">(<span class="type">int</span> position)</span> <span class="comment">//这个方法返回了在列表中与指定索引对应的行id</span></span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> View <span class="title function_">getView</span><span class="params">(<span class="type">int</span> position, View convertView, ViewGroup parent)</span> <span class="comment">//这个方法返回了指定索引对应的数据项的视图</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="Handler"><a href="#Handler" class="headerlink" title="Handler"></a>Handler</h1><blockquote>
+<p>大致流程：</p>
+<p>线程启动，初始化 Looper，Looper内部初始化 MessageQueue，调用 Looper.loop()开启循环，MessageQueue以链表形式遍历 Message 并分发，由 Message 内存储的 Handler 或 Runnable 来消费消息</p>
+<p>当 MessageQueue 无消息时（queue.next()会阻塞），线程进入休眠，当有新的 Message 入队后会唤醒 Looper 所在线程并重新取消息</p>
+</blockquote>
+<p>handleMessage运行的线程与创建Handler的线程是同一线程（也可以在构造函数里传入某线程的looper，就会初始化到那个线程），可以通过这种方式切到主线程</p>
+<p>不能在没有Looper的前提下去使用Handler（处理回调的线程必须有轮询）</p>
+<ul>
+<li><p>Message：消息对象,是在线程之间传递的消息,它可以在内部携带少量信息.可以传递bundle数据</p>
+<blockquote>
+<p>由于 Message 采用了缓存复用机制，当 handleMessage 方法被回调后，Message 携带的所有参数都会被清空，而如果外部的 handleMessage方法是使用了异步线程来处理 Message 的话，那么异步线程只会得到一个空白的 Message</p>
+</blockquote>
+</li>
+<li><p>MessageQueue：存储消息对象的队列,每个线程只有一个,阻塞队列.</p>
+</li>
+<li><p>Looper：负责循环读取MessageQueue中的消息,读到消息之后把消息交给Handler去处理.是每个线程中MessageQueue的管家,调用Looper.loop()方法后,就会进入到一个无限循环中,会从头开始取消息并传递到Handler的handlerMessage()方法中,每个线程只有一个looper对象。<strong>其中会不断调用messageQueue的next()方法，当有消息就处理，否则阻塞在messageQueue的next()方法中</strong></p>
+<blockquote>
+<p>主线程中vSync、用户操作、系统广播等都属于消息，消息到来前主线程被阻塞,会释放CPU资源,进入休眠状态，消息到来时就从休眠中唤醒，处理完新消息后，再次queue.next()进入休眠，如此反复。</p>
+<p>ANR并非因为消息等待阻塞引起，而是<strong>消息处理时间过长</strong>，无法及时响应下一个消息</p>
+</blockquote>
+</li>
+<li><p>Handler：发送消息与处理消息.在其子线程或当前线程发送Message,在UI线程处理消息对象,发送的消息经过处理后最终在handlerMessage方法中处理.</p>
+</li>
+<li><p>消息屏障：消息屏障是一种特殊消息，MessageQueue遍历到该屏障消息时，就会先跳过同步消息，优先执行异步消息。我们可以通过调用 Message 对象的 setAsynchronous(boolean async) 方法来主动发送异步消息，但不能发送消息屏障消息（可以通过反射调用 MessageQueue 的 postSyncBarrier() 方法来发送），所以设置了异步消息后也不一定马上执行</p>
+</li>
+</ul>
+<p>实例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MainActivity</span> <span class="keyword">extends</span> <span class="title class_">Activity</span> <span class="keyword">implements</span> <span class="title class_">OnClickListener</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">MSG_DOWN_FAIL</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">MSG_DOWN_SUCCESS</span> <span class="operator">=</span> <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">MSG_DOWN_START</span> <span class="operator">=</span> <span class="number">3</span>;</span><br><span class="line">  	<span class="comment">// 实例化方式一：适用于post方式通信</span></span><br><span class="line"> 		<span class="keyword">private</span> <span class="type">Handler</span> <span class="variable">mHandler</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Handler</span>(Looper.getMainLooper());</span><br><span class="line">  	<span class="comment">// 实例化方式二：适用于sendMessage，obtainMessage方式通信</span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">Handler</span> <span class="variable">mHandler</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Handler</span>() &#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">handleMessage</span><span class="params">(Message msg)</span> &#123;    <span class="comment">// 接收消息方法</span></span><br><span class="line">            <span class="keyword">switch</span>(msg.what)&#123;</span><br><span class="line">            <span class="keyword">case</span> MSG_DOWN_FAIL:</span><br><span class="line">                mTipTv.setText(<span class="string">&quot;download fial&quot;</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> MSG_DOWN_SUCCESS:</span><br><span class="line">                mTipTv.setText(<span class="string">&quot;download success&quot;</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> MSG_DOWN_START:</span><br><span class="line">                mTipTv.setText(<span class="string">&quot;download start&quot;</span>);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onClick</span><span class="params">(View view)</span> &#123;</span><br><span class="line">        <span class="keyword">switch</span> (view.getId()) &#123;</span><br><span class="line">        <span class="keyword">case</span> R.id.bt_start:</span><br><span class="line">            <span class="keyword">if</span>(!isDownloading)&#123;</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">MyThread</span>().start();</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">MyThread</span> <span class="keyword">extends</span> <span class="title class_">Thread</span> &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">            <span class="comment">// ...耗时操作</span></span><br><span class="line">          	<span class="comment">// 不同的实例化Message方式，后两种会从消息池中取出，避免多生成</span></span><br><span class="line">            <span class="type">Message</span> <span class="variable">msg</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Message</span>();</span><br><span class="line">          	<span class="type">Message</span> <span class="variable">msg</span> <span class="operator">=</span> Message.obtain</span><br><span class="line">						<span class="type">Message</span> <span class="variable">msg</span> <span class="operator">=</span> mHandler.obtainMessage()</span><br><span class="line">            msg.what = MSG_DOWN_SUCCESS;</span><br><span class="line">            <span class="comment">//msg.arg1 = 111;  可以设置arg1、arg2、obj等参数，传递这些数据</span></span><br><span class="line">            <span class="comment">//msg.arg2 = 222; msg.obj = obj;</span></span><br><span class="line"></span><br><span class="line">          <span class="comment">// 方式一：sendMessage方式通知其他线程</span></span><br><span class="line">            mHandler.sendMessage(msg);</span><br><span class="line"></span><br><span class="line">          <span class="comment">// 方式二：post方式通知其他线程</span></span><br><span class="line">          <span class="comment">// Handler的post方法参数为Runnable对象，mHandler是在主线程中创建的，所以Runnalbe会在主线中运行（与Runnable创建的线程无关、与mHandler.post方法调用的线程无关）。</span></span><br><span class="line">            mHandler.post(<span class="keyword">new</span> <span class="title class_">Runnable</span>() &#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;  </span><br><span class="line">                    <span class="comment">// 已经回到主线程，直接更新ui，不需要发message</span></span><br><span class="line">                    mTipTv.setText(<span class="string">&quot;download success&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line"></span><br><span class="line">          <span class="comment">// 方式三：obtainMessage方式通知其他线程</span></span><br><span class="line">          mHandler.obtainMessage(MSG_DOWN_SUCCESS).sendToTarget();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在子线程中创建Handler</span></span><br><span class="line"><span class="comment">// 方式一：</span></span><br><span class="line"><span class="keyword">new</span> <span class="title class_">Thread</span>(<span class="string">&quot;Thread#2&quot;</span>) &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">    	Looper.prepare();</span><br><span class="line">      <span class="type">Handler</span> <span class="variable">handler</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Handler</span>();</span><br><span class="line">      <span class="comment">// loop会让线程阻塞，不会再往下执行</span></span><br><span class="line">      Looper.loop();</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;.start();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 退出轮询</span></span><br><span class="line">Looper.quit()</span><br><span class="line">Looper.quitSafely()</span><br><span class="line">  </span><br><span class="line"><span class="comment">// 方式二：</span></span><br><span class="line"><span class="comment">// 使用HandlerThread，Handler的逻辑都在HandlerThread线程完成</span></span><br><span class="line"><span class="keyword">private</span> HandlerThread handlerThread;</span><br><span class="line"><span class="keyword">private</span> Handler backgroundHandler;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">startRecording</span><span class="params">()</span> &#123;</span><br><span class="line">  	<span class="comment">// 创建子线程</span></span><br><span class="line">    handlerThread = <span class="keyword">new</span> <span class="title class_">HandlerThread</span>(<span class="string">&quot;AudioRecordThread&quot;</span>);</span><br><span class="line">    handlerThread.start();</span><br><span class="line">    backgroundHandler = <span class="keyword">new</span> <span class="title class_">Handler</span>(handlerThread.getLooper());</span><br><span class="line">  </span><br><span class="line">  	backgroundHandler.post(<span class="keyword">new</span> <span class="title class_">Runnable</span>() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">					<span class="comment">// ...这里的代码一定在HandlerThread线程执行</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">stopRecording</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (handlerThread != <span class="literal">null</span>) &#123;</span><br><span class="line">        handlerThread.quitSafely();</span><br><span class="line">        handlerThread = <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="内存泄漏"><a href="#内存泄漏" class="headerlink" title="内存泄漏"></a>内存泄漏</h2><p>当退出 Activity 时，如果作为内部类的 Handler 中还保存着待处理的延时消息的话，那么就会导致内存泄漏，可以通过调用<code>Handler.removeCallbacksAndMessages(null)</code>来移除所有待处理的 Message</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/03/25/java/" rel="prev" title="Java学习笔记">
+      <i class="fa fa-chevron-left"></i> Java学习笔记
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/03/25/Android%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B04/" rel="next" title="Android学习笔记4">
+      Android学习笔记4 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6%E5%88%86%E5%8F%91%E6%9C%BA%E5%88%B6"><span class="nav-number">1.</span> <span class="nav-text">事件分发机制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6%E4%BC%A0%E9%80%92"><span class="nav-number">1.1.</span> <span class="nav-text">事件传递</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E4%BB%B6%E5%93%8D%E5%BA%94"><span class="nav-number">1.2.</span> <span class="nav-text">事件响应</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#EventBus"><span class="nav-number">2.</span> <span class="nav-text">EventBus</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#xml"><span class="nav-number">3.</span> <span class="nav-text">xml</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#drawable"><span class="nav-number">4.</span> <span class="nav-text">drawable</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#AsyncTask"><span class="nav-number">5.</span> <span class="nav-text">AsyncTask</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Adapter"><span class="nav-number">6.</span> <span class="nav-text">Adapter</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Handler"><span class="nav-number">7.</span> <span class="nav-text">Handler</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%B3%84%E6%BC%8F"><span class="nav-number">7.1.</span> <span class="nav-text">内存泄漏</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="火箭快餐"
+      src="/uploads/avatar.jpeg">
+  <p class="site-author-name" itemprop="name">火箭快餐</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">火箭快餐</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
